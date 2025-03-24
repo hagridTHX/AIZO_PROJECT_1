@@ -1,7 +1,7 @@
 #include "BoardGame.h"
 #include <cstring>
 
-// pomocnicza metoda prywatna - zlicza litery 'a' w nazwie wydawcy na potrzeby testów
+// pomocnicza metoda do zliczania litery 'a' w nazwie wydawcy na potrzeby testów
 int BoardGame::countA() const {
     int counter = 0;
     for (int i = 0; publisher[i] != '\0'; ++i)

@@ -1,19 +1,42 @@
 #include <iostream>
-#include "utils/Timer.h"
+#include <fstream>
+#include <string>
+
+void printHelp();
+void startTest();
+void startBenchmark();
 
 int main(int argc, char* argv[]) {
-    Timer timer;
-    timer.start();
 
-    // symulacja operacji do zmierzenia
-    for (volatile int i = 0; i < 1000000; ++i) {
-        for (volatile int j = 0; j < 100; ++j);
+    if ((argc > 1 && std::string(argv[1]) == "--help") || argc == 1) {
+        printHelp();
+        return 0;
     }
 
-    timer.stop();
+    if (argc > 1 && std::string(argv[1]) == "--file") {
+        startTest();
+        return 0;
+    }
 
-    std::cout << "Cza123132131s: " << timer.result() << " ms" << std::endl;
-    timer.reset();
-    std::cout << timer.result()<< std::endl;
-    return 0;
+    if (argc > 1 && std::string(argv[1]) == "--test") {
+        startBenchmark();
+        return 0;
+    }
+}
+
+void printHelp() {
+    // Otwieramy plik help.txt w trybie odczytu
+    std::ifstream helpFile("utils/helpScript.txt");
+    if (!helpFile.is_open()) {
+        std::cerr << "Nie można otworzyć pliku utils/helpScript.txt" << std::endl;
+        return;
+    }
+
+    // Wczytujemy linia po linii i wyświetlamy
+    std::string line;
+    while (std::getline(helpFile, line)) {
+        std::cout << line << std::endl;
+    }
+
+    helpFile.close();
 }
