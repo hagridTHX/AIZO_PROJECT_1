@@ -1,0 +1,30 @@
+//
+// Created by Franek on 23.03.2025.
+//
+
+#ifndef PROJEKTAIZO_BOARDGAME_H
+#define PROJEKTAIZO_BOARDGAME_H
+
+class BoardGame {
+private:
+    char name[26]{}; // ostatni znak to \0
+    char publisher[26]{};
+    int min_players;      // min 1
+    int max_players;      // max 10
+    int duration_minutes; // 5 - 480
+    int complexity_level; // 1 - 10
+    int joy_level;        // 1 - 10
+
+    [[nodiscard]] int countA() const;
+
+public:
+    BoardGame(const char* nm, const char* pub, int minP, int maxP, int dur, int complexity, int joy);
+    [[nodiscard]] double calculateCoolness() const;
+    bool operator>(const BoardGame& bg) const;
+    bool operator<(const BoardGame& bg) const;
+    bool operator>=(const BoardGame& bg) const;
+    bool operator<=(const BoardGame& bg) const;
+    bool operator==(const BoardGame& bg) const;
+};
+
+#endif //PROJEKTAIZO_BOARDGAME_H

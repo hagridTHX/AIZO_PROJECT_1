@@ -1,0 +1,6 @@
+# ninja log v6
+676	734	7643819802153097	projektAizo.exe	b8c7739fbaa77dea
+3	663	7643819795419709	CMakeFiles/projektAizo.dir/main.cpp.obj	76597691e8d49ebe
+6	645	7643810865881157	CMakeFiles/projektAizo.dir/Timer.cpp.obj	d3246b0703e9aa3e
+1	203	7644386904217368	build.ninja	a32c8386968a0364
+6	676	7643819795449813	CMakeFiles/projektAizo.dir/utils/Timer.cpp.obj	bb2868a6dcbe68db
