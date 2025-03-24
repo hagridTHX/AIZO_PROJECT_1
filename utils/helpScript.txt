@@ -1,44 +1,52 @@
-HELP FOR YOURPROJECT (ver. 5.5)
-
 PROGRAM MODES:
 -------------------------------------------------------------------------------
 1) FILE TEST MODE
-   - Odczyt danych z pliku, jednorazowe posortowanie, zapis (opcjonalny) wyniku
+   - Odczyt danych z pliku, jednorazowe posortowanie, zapis wyniku
 
    Usage:
-     ./YourProject --file <algorithm> <type> <inputFile> [outputFile]
-                   [--pivot <0..3>] [--gap <0..N>] [--drunk <p>]
+     ./projektAizo --file <algorithm> <type> [--pivot <0..3>] [--gap <0..1>] [--drunk <p>] <inputFile> [outputFile]
 
    Gdzie:
-     <algorithm>  ID wybranego algorytmu sortowania (np. 0 - Insert, 1 - Heap,
-                  2 - Shell, 3 - Quick, 4 - InsertDrunk, ...
-                  możesz rozszerzyć wg własnego kodu).
+     <> <- obowiązkowy parametr
+     [] <- opcjonalny parametr
+     -- <- trzeba podać typ parametru podczas wprowadzania
+
+     <algorithm>  ID wybranego algorytmu sortowania:
+
+                  0 - Insert
+                  1 - Heap
+                  2 - Shell
+                  3 - Quick
+                  4 - InsertDrunk
+
      <type>       Typ danych do wczytania i posortowania:
+
                   0 - int
                   1 - float
-                  2 - string (łańcuch znaków)
-                  3 - boardGame (planszówka)
-                  (możesz zdefiniować własne identyfikatory)
-     <inputFile>  Ścieżka do pliku z danymi do posortowania.
-     [outputFile] Opcjonalny plik wyjściowy, do którego zapisane zostaną
-                  posortowane dane (w formacie: liczba_elementów + wartości).
+                  2 - tablica char[]
+                  3 - planszówka
 
-   Opcje dodatkowe (opcjonalne):
      --pivot <0..3>       Sposób wyboru pivota (tylko dla QuickSort):
-                            0 - pierwszy element
-                            1 - ostatni element
-                            2 - środkowy element
-                            3 - losowy element
-     --gap <0..N>         Wybór metody generowania odstępów (tylko dla ShellSort),
-                          np. 0 - Ciąg Shella, 1 - Ciąg Knutha, itd.
+
+                          0 - pierwszy element
+                          1 - środkowy element
+                          2 - ostatni element
+                          3 - losowy element
+
+     --gap <0..1>         Wybór metody generowania odstępów (tylko dla ShellSort):
+
+                          0 - Shell'a 1959
+                          1 - Frank'a, Lazarus'a 1960
+
      --drunk <p>          Wersja „pijanego studenta”, czyli dodatkowy parametr
                           losowego zaburzania sortowania. Im wyższa wartość p,
                           tym większa szansa na „psucie” porządku.
                           Stosowane tylko w algorytmach z sufiksem „Drunk”.
 
-   Przykład:
-     ./YourProject --file 3 0 dane.txt wynik.txt --pivot 2
-     (QuickSort typu int, pivot = środkowy element)
+     <inputFile>  Nazwa pliku z danymi do posortowania znajdującego się w folderze input.
+
+     [outputFile] opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
+                  Brak argumentu ustawi nazwę tego pliku na [<inputFile> + OUT].txt.
 
 -------------------------------------------------------------------------------
 2) BENCHMARK MODE
@@ -46,35 +54,58 @@ PROGRAM MODES:
      zapisywane do pliku (czas, min, max, odchylenie standardowe, itp.)
 
    Usage:
-     ./YourProject --test <algorithm> <type> <size> <outputFile>
-                   [--pivot <0..3>] [--gap <0..N>] [--drunk <p>]
-                   [--distribution <distType>] [--runs <N>]
+        ./projektAizo --file <algorithm> <type> [--pivot <0..3>] [--gap <0..1>] [--drunk <p>] [--distribution <distType>] [--runs <N>] [outputFile]
 
-   Gdzie:
-     <algorithm>  ID wybranego algorytmu sortowania (jak wyżej).
-     <type>       Typ danych do wygenerowania:
-                  0 - int
-                  1 - float
-                  2 - string
-                  3 - boardGame
-     <size>       Liczba elementów (np. 10.000, 50.000 itd.).
-     <outputFile> Plik, w którym zostaną zapisane zbiorcze wyniki pomiarów
-                  (uśredniony czas, min, max, odchylenie standardowe, itp.).
+      Gdzie:
+        <> <- obowiązkowy parametr
+        [] <- opcjonalny parametr
+        -- <- trzeba podać typ parametru podczas wprowadzania
 
-   Opcje dodatkowe:
-     --pivot <0..3>       (jak wyżej, tylko dla QuickSort)
-     --gap <0..N>         (jak wyżej, tylko dla ShellSort)
-     --drunk <p>          (jak wyżej, tylko dla algorytmów z „Drunk”)
-     --distribution <d>   Rodzaj rozkładu początkowego danych (np. 0 - losowy,
-                          1 - rosnący, 2 - malejący, 3 - częściowy 33%,
-                          4 - częściowy 66%, itp.).
-     --runs <N>           Liczba powtórzeń w celu uśrednienia wyników
-                          (np. 100, aby uzyskać miarodajne wyniki).
+        <algorithm>  ID wybranego algorytmu sortowania:
 
-   Przykład:
-     ./YourProject --test 2 0 10000 wyniki.txt --gap 1 --distribution 0 --runs 100
-     (ShellSort typu int, 10.000 elementów, generowanych losowo, 100 pomiarów,
-      metoda odstępu = 1 (np. Ciąg Knutha))
+                     0 - Insert
+                     1 - Heap
+                     2 - Shell
+                     3 - Quick
+                     4 - InsertDrunk
+
+        <type>       Typ danych do wczytania i posortowania:
+
+                     0 - int
+                     1 - float
+                     2 - tablica char[]
+                     3 - planszówka
+
+        --pivot <0..3>       Sposób wyboru pivota (tylko dla QuickSort):
+
+                             0 - pierwszy element
+                             1 - środkowy element
+                             2 - ostatni element
+                             3 - losowy element
+
+        --gap <0..1>         Wybór metody generowania odstępów (tylko dla ShellSort):
+
+                             0 - Shell'a 1959
+                             1 - Frank'a, Lazarus'a 1960
+
+        --drunk <p>          Wersja „pijanego studenta”, czyli dodatkowy parametr
+                             losowego zaburzania sortowania. Im wyższa wartość p,
+                             tym większa szansa na „psucie” porządku.
+                             Stosowane tylko w algorytmach z sufiksem „Drunk”.
+
+        --distribution <distType>   Rodzaj rozkładu początkowego danych:
+
+                             0 - losowy
+                             1 - rosnący
+                             2 - malejący
+                             3 - posortowany częściowo w 33%
+                             4 - posortowany częściowo w 66%
+
+        --runs <N>           Liczba powtórzeń w celu uśrednienia wyników
+                                  (np. 100, aby uzyskać miarodajne wyniki).
+
+        [outputFile] opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
+                     Brak argumentu ustawi nazwę tego pliku na [wprowadzone parametry].txt.
 
 -------------------------------------------------------------------------------
 3) HELP MODE
@@ -84,64 +115,42 @@ PROGRAM MODES:
      ./YourProject --help
 
    - Program również wyświetli tę wiadomość, jeśli nie zostaną podane żadne
-     argumenty.
+     argumenty wejściowe.
 
 -------------------------------------------------------------------------------
 UWAGI DODATKOWE (WERSJA 5.5):
-- Program musi umożliwiać przeprowadzenie Badania 1, 2 i 3:
-  1) Porównanie czasu sortowania przy różnych rozmiarach tablic (np. 5 wielkości).
-  2) Porównanie czasu przy różnych rozkładach początkowych (losowe, rosnące,
-     malejące, częściowo posortowane).
-  3) Porównanie działania co najmniej 3 typów danych (tu: aż 4 typy: int, float,
-     string, boardGame).
-
-- „boardGame” (planszówka) definiujemy przez:
-   * nazwę (max 25 znaków),
-   * wydawcę (max 25 znaków),
-   * min. i maks. liczbę graczy (1–10),
-   * długość rozgrywki (5–480 minut),
-   * poziom skomplikowania (1–10),
-   * poziom radości (1–10).
-  Dodatkowo należy zaimplementować własny wzór „fajności” na minutę na gracza,
-  według którego sortujemy rosnąco. Wczytywanie/zapisywanie w formacie
-  „jeden element = jedna linijka”, podobnie jak liczby.
-
-- W algorytmach z dopiskiem „Drunk” (pijanego studenta) sortowanie jest
-  celowo zaburzane parametrem `--drunk <p>`. Dla różnych wartości p (np. 0,1,2,5,10)
-  należy przeprowadzić badania porównawcze w kontekście prędkości i jakości
-  sortowania.
-
-- Dla ShellSort należy przeanalizować wpływ metody wyznaczania „gap” (np.
-  różne ciągi: Shell, Knuth, Tokuda itd.), a dla QuickSort – wpływ sposobu
-  wyboru pivota (pierwszy, ostatni, środek, losowy).
-
-- Pomiary muszą być wykonywane wielokrotnie (np. 100 razy), a wyniki (średni
-  czas, min, max, odchylenie standardowe) powinny być zapisywane do pliku.
-
-- Kod algorytmów sortowania musi być napisany własnoręcznie (bez gotowych
-  kontenerów typu std::vector czy std::list) oraz z wykorzystaniem **szablonów**
-  (template), aby można było z łatwością sortować różne typy danych bez modyfikacji
-  kodu algorytmów.
-
-- Zwróć uwagę na dynamiczną alokację (punkt 2 z wytycznych), poprawność
-  sortowania (punkt 5), pomiar tylko czasu faktycznego sortowania (punkt 6) i
-  brak wycieków pamięci (punkt 4).
+-pliki wejściowe i wyjściowe domyślnie będą w folderach odpowiednio /input, /output
 
 -------------------------------------------------------------------------------
 EXAMPLE CALLS:
 
-  * Sortowanie 10 tysięcy liczb int przy użyciu HeapSort,
-    wczytanie z pliku i zapis do innego:
-      ./YourProject --file 1 0 input_int.txt output_int.txt
+FILE TEST MODE:
+1) InsertSort (algorithm=0), typ int (type=0), wczytanie z pliku intData.txt
+   i zapis do intDataSorted.txt:
+   ./projektAizo --file 0 0 intData.txt intDataSorted.txt
 
-  * Benchmark QuickSort typu float (pivota losowy), rozmiar 50.000,
-    losowa dystrybucja, 50 powtórzeń:
-      ./YourProject --test 3 1 50000 floats_bench.txt --pivot 3 --distribution 0 --runs 50
+2) QuickSort (algorithm=3), typ float (type=1), pivot = ostatni element (pivot=2),
+   wczytanie z pliku floats.txt, brak podanego pliku wyjściowego:
+   ./projektAizo --file 3 1 --pivot 2 floats.txt
 
-  * Sortowanie typu „boardGame” (ID 3?), z algorytmem Shella,
-    metodą odstępu Knutha (gap=1), w wersji „pijanego studenta” p=5:
-      ./YourProject --file 2 3 planszowki_in.txt planszowki_out.txt --gap 1 --drunk 5
+3) InsertDrunk (algorithm=4), typ boardGame (type=3), parametr p=5 (drunk=5),
+   wczytanie z pliku boardgames.txt i zapis do boardgamesOut.txt:
+   ./projektAizo --file 4 3 --drunk 5 boardgames.txt boardgamesOut.txt
+
+
+BENCHMARK MODE:
+1) InsertSort (algorithm=0), typ int (type=0), losowy rozkład (distribution=0),
+   100 powtórzeń (runs=100), brak pliku wyjściowego:
+   ./projektAizo --test 0 0 --distribution 0 --runs 100
+
+2) QuickSort (algorithm=3), typ float (type=1), pivot losowy (pivot=3),
+   rozkład malejący (distribution=2), 50 powtórzeń (runs=50),
+   zapis do bench_floats.txt:
+   ./projektAizo --test 3 1 --pivot 3 --distribution 2 --runs 50 bench_floats.txt
+
+3) ShellSort (algorithm=2), typ tablica char[] (type=2), gap=1 (Frank'a, Lazarus'a 1960),
+   rozkład częściowo posortowany w 66% (distribution=4), 30 powtórzeń (runs=30),
+   zapis do bench_strings.txt:
+   ./projektAizo --test 2 2 --gap 1 --distribution 4 --runs 30 bench_strings.txt
 
 -------------------------------------------------------------------------------
-For more details, see the documentation or contact the author.
-Happy sorting!

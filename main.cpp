@@ -40,3 +40,11 @@ void printHelp() {
 
     helpFile.close();
 }
+
+void startTest() {
+
+}
+
+void startBenchmark() {
+
+}
