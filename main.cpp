@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
 
     timer.stop();
 
-    std::cout << "Czas: " << timer.result() << " ms" << std::endl;
+    std::cout << "Cza1231s: " << timer.result() << " ms" << std::endl;
     timer.reset();
     std::cout << timer.result()<< std::endl;
     return 0;
