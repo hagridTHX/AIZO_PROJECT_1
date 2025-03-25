@@ -25,14 +25,14 @@ int main(int argc, char* argv[]) {
 }
 
 void printHelp() {
-    // Otwieramy plik help.txt w trybie odczytu
+    // otwieramy plik helpScript.txt w trybie odczytu
     std::ifstream helpFile("utils/helpScript.txt");
     if (!helpFile.is_open()) {
         std::cerr << "Nie można otworzyć pliku utils/helpScript.txt" << std::endl;
         return;
     }
 
-    // Wczytujemy linia po linii i wyświetlamy
+    // wczytujemy linia po linii i wyświetlamy
     std::string line;
     while (std::getline(helpFile, line)) {
         std::cout << line << std::endl;

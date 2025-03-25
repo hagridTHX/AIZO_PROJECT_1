@@ -112,7 +112,7 @@ PROGRAM MODES:
    - Wyświetlenie niniejszej pomocy
 
    Usage:
-     ./YourProject --help
+     ./projektAizo --help
 
    - Program również wyświetli tę wiadomość, jeśli nie zostaną podane żadne
      argumenty wejściowe.
