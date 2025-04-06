@@ -61,8 +61,8 @@ build CMakeFiles/projektAizo.dir/utils/Timer.cpp.obj: CXX_COMPILER__projektAizo_
   OBJECT_DIR = CMakeFiles\projektAizo.dir
   OBJECT_FILE_DIR = CMakeFiles\projektAizo.dir\utils
 
-build CMakeFiles/projektAizo.dir/utils/FileHandler.cpp.obj: CXX_COMPILER__projektAizo_unscanned_Debug C$:/Users/Franek/CLionProjects/projektAizo/utils/FileHandler.cpp || cmake_object_order_depends_target_projektAizo
-  DEP_FILE = CMakeFiles\projektAizo.dir\utils\FileHandler.cpp.obj.d
+build CMakeFiles/projektAizo.dir/utils/DataHandler.cpp.obj: CXX_COMPILER__projektAizo_unscanned_Debug C$:/Users/Franek/CLionProjects/projektAizo/utils/DataHandler.cpp || cmake_object_order_depends_target_projektAizo
+  DEP_FILE = CMakeFiles\projektAizo.dir\utils\DataHandler.cpp.obj.d
   FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
   OBJECT_DIR = CMakeFiles\projektAizo.dir
   OBJECT_FILE_DIR = CMakeFiles\projektAizo.dir\utils
@@ -73,6 +73,24 @@ build CMakeFiles/projektAizo.dir/BoardGame.cpp.obj: CXX_COMPILER__projektAizo_un
   OBJECT_DIR = CMakeFiles\projektAizo.dir
   OBJECT_FILE_DIR = CMakeFiles\projektAizo.dir
 
+build CMakeFiles/projektAizo.dir/utils/DataGenerator.cpp.obj: CXX_COMPILER__projektAizo_unscanned_Debug C$:/Users/Franek/CLionProjects/projektAizo/utils/DataGenerator.cpp || cmake_object_order_depends_target_projektAizo
+  DEP_FILE = CMakeFiles\projektAizo.dir\utils\DataGenerator.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\projektAizo.dir
+  OBJECT_FILE_DIR = CMakeFiles\projektAizo.dir\utils
+
+build CMakeFiles/projektAizo.dir/utils/FileTestMode.cpp.obj: CXX_COMPILER__projektAizo_unscanned_Debug C$:/Users/Franek/CLionProjects/projektAizo/utils/FileTestMode.cpp || cmake_object_order_depends_target_projektAizo
+  DEP_FILE = CMakeFiles\projektAizo.dir\utils\FileTestMode.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\projektAizo.dir
+  OBJECT_FILE_DIR = CMakeFiles\projektAizo.dir\utils
+
+build CMakeFiles/projektAizo.dir/utils/BenchmarkMode.cpp.obj: CXX_COMPILER__projektAizo_unscanned_Debug C$:/Users/Franek/CLionProjects/projektAizo/utils/BenchmarkMode.cpp || cmake_object_order_depends_target_projektAizo
+  DEP_FILE = CMakeFiles\projektAizo.dir\utils\BenchmarkMode.cpp.obj.d
+  FLAGS = -g -std=gnu++20 -fdiagnostics-color=always
+  OBJECT_DIR = CMakeFiles\projektAizo.dir
+  OBJECT_FILE_DIR = CMakeFiles\projektAizo.dir\utils
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target projektAizo
@@ -81,7 +99,7 @@ build CMakeFiles/projektAizo.dir/BoardGame.cpp.obj: CXX_COMPILER__projektAizo_un
 #############################################
 # Link the executable projektAizo.exe
 
-build projektAizo.exe: CXX_EXECUTABLE_LINKER__projektAizo_Debug CMakeFiles/projektAizo.dir/main.cpp.obj CMakeFiles/projektAizo.dir/utils/Timer.cpp.obj CMakeFiles/projektAizo.dir/utils/FileHandler.cpp.obj CMakeFiles/projektAizo.dir/BoardGame.cpp.obj
+build projektAizo.exe: CXX_EXECUTABLE_LINKER__projektAizo_Debug CMakeFiles/projektAizo.dir/main.cpp.obj CMakeFiles/projektAizo.dir/utils/Timer.cpp.obj CMakeFiles/projektAizo.dir/utils/DataHandler.cpp.obj CMakeFiles/projektAizo.dir/BoardGame.cpp.obj CMakeFiles/projektAizo.dir/utils/DataGenerator.cpp.obj CMakeFiles/projektAizo.dir/utils/FileTestMode.cpp.obj CMakeFiles/projektAizo.dir/utils/BenchmarkMode.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\projektAizo.dir
