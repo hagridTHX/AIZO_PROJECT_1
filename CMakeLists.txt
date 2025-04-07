@@ -14,4 +14,6 @@ add_executable(projektAizo main.cpp
         utils/Data.h
         utils/FileTestMode.cpp
         utils/BenchmarkMode.cpp
+        algorithms/SortingAlgorithms.cpp
+        algorithms/SortingAlgorithms.h
 )

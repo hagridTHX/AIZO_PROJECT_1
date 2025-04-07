@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
 
     std::string mode = argv[1];
     if (mode == "--file") {
-        FileTestMode fileMode(argc, argv);
-        fileMode.run();
+        FileTestMode fileTestMode(argc, argv);
+        fileTestMode.run();
     } else if (mode == "--test") {
         BenchmarkMode benchmarkMode(argc, argv);
         benchmarkMode.run();

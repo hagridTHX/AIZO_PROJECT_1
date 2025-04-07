@@ -34,7 +34,7 @@ PROGRAM MODES:
                           3 - losowy element
 
      --gap <0..1>         Wybór metody generowania odstępów (tylko dla ShellSort):
-
+``
                           0 - Shell'a 1959
                           1 - Frank'a, Lazarus'a 1960
 

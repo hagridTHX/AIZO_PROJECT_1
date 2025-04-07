@@ -1,12 +1,10 @@
 # ninja log v6
 959	1117	7645578988642142	projektAizo.exe	7ab8a5a03c3b9c21
-25	958	7645578979317138	CMakeFiles/projektAizo.dir/main.cpp.obj	76597691e8d49ebe
+3	479	7656626328848276	CMakeFiles/projektAizo.dir/main.cpp.obj	76597691e8d49ebe
 6	645	7643810865881157	CMakeFiles/projektAizo.dir/Timer.cpp.obj	d3246b0703e9aa3e
-1	203	7656625247958186	build.ninja	a32c8386968a0364
+11	404	7656724804780177	CMakeFiles/projektAizo.dir/utils/BenchmarkMode.cpp.obj	eb5641e74559a3dd
+1	203	7656849965965792	build.ninja	a32c8386968a0364
 17	79	7645297427274408	CMakeFiles/projektAizo.dir/BoardGame.cpp.obj	1d9a3b6c0a867d38
 6	676	7643819795449813	CMakeFiles/projektAizo.dir/utils/Timer.cpp.obj	bb2868a6dcbe68db
 14	51	7645297427254337	CMakeFiles/projektAizo.dir/utils/FileHandler.cpp.obj	5c1b0f1ea6a0b7c2
-13	478	7656626328948634	CMakeFiles/projektAizo.dir/utils/BenchmarkMode.cpp.obj	eb5641e74559a3dd
-3	479	7656626328848276	CMakeFiles/projektAizo.dir/main.cpp.obj	76597691e8d49ebe
 11	482	7656626328928560	CMakeFiles/projektAizo.dir/utils/FileTestMode.cpp.obj	f7f04fd78cd4b6a2
-11	404	7656724804780177	CMakeFiles/projektAizo.dir/utils/BenchmarkMode.cpp.obj	eb5641e74559a3dd

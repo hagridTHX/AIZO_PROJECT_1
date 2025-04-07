@@ -1,15 +1,28 @@
 #include "Modes.h"
 #include <iostream>
-#include <cstdlib>
+#include <stdexcept>
 #include <string>
 
-// Definicja funkcji pomocniczej addFolderPrefix w anonimowej przestrzeni nazw
+// Funkcja pomocnicza: dodaje prefiks folderu, jeśli nazwa pliku nie zawiera ścieżki.
 namespace {
     std::string addFolderPrefix(const std::string& filename, const std::string& folder) {
         if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
             return folder + "/" + filename;
         else
             return filename;
+    }
+
+    // Funkcja pomocnicza do bezpiecznego parsowania liczby całkowitej z argv.
+    int parseInt(const char* s, const std::string& flagName) {
+        try {
+            return std::stoi(s);
+        } catch (const std::invalid_argument&) {
+            std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
+            exit(1);
+        } catch (const std::out_of_range&) {
+            std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";
+            exit(1);
+        }
     }
 }
 
@@ -20,16 +33,16 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
         std::cerr << "Błąd: Za mało argumentów dla trybu BENCHMARK MODE." << std::endl;
         exit(1);
     }
-    // Obowiązkowe argumenty
-    algorithm = std::atoi(argv[2]);
-    type = std::atoi(argv[3]);
+    // Parsowanie obowiązkowych argumentów
+    algorithm = parseInt(argv[2], "<algorithm>");
+    type = parseInt(argv[3], "<type>");
     int currentArg = 4;
     // Parsowanie flag opcjonalnych: --pivot, --gap, --drunk, --distribution, --runs
     while (currentArg < argc && std::string(argv[currentArg]).rfind("--", 0) == 0) {
         std::string flag = argv[currentArg];
         if (flag == "--pivot") {
             if (currentArg + 1 < argc) {
-                pivot = std::atoi(argv[currentArg + 1]);
+                pivot = parseInt(argv[currentArg + 1], "--pivot");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --pivot." << std::endl;
@@ -37,7 +50,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
             }
         } else if (flag == "--gap") {
             if (currentArg + 1 < argc) {
-                gap = std::atoi(argv[currentArg + 1]);
+                gap = parseInt(argv[currentArg + 1], "--gap");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --gap." << std::endl;
@@ -45,7 +58,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
             }
         } else if (flag == "--drunk") {
             if (currentArg + 1 < argc) {
-                drunk = std::atoi(argv[currentArg + 1]);
+                drunk = parseInt(argv[currentArg + 1], "--drunk");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --drunk." << std::endl;
@@ -53,7 +66,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
             }
         } else if (flag == "--distribution") {
             if (currentArg + 1 < argc) {
-                distribution = std::atoi(argv[currentArg + 1]);
+                distribution = parseInt(argv[currentArg + 1], "--distribution");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --distribution." << std::endl;
@@ -61,7 +74,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
             }
         } else if (flag == "--runs") {
             if (currentArg + 1 < argc) {
-                runs = std::atoi(argv[currentArg + 1]);
+                runs = parseInt(argv[currentArg + 1], "--runs");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --runs." << std::endl;
@@ -76,7 +89,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
         std::string rawOutput = argv[currentArg];
         outputFile = addFolderPrefix(rawOutput, "output");
     } else {
-        // Jeżeli nie podano outputFile, generujemy nazwę na podstawie wprowadzonych parametrów
+        // Jeśli nie podano outputFile, generujemy nazwę pliku opartą na wprowadzonych parametrach
         std::string name = "alg" + std::to_string(algorithm) + "_type" + std::to_string(type);
         if (pivot != -1)
             name += "_pivot" + std::to_string(pivot);
@@ -108,7 +121,6 @@ void BenchmarkMode::run() {
     if (runs != -1)
         std::cout << "Runs: " << runs << std::endl;
     std::cout << "Output File: " << outputFile << std::endl;
-
 
 
 }
