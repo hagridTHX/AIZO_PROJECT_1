@@ -3,7 +3,6 @@
 #include <stdexcept>
 #include <string>
 
-// Funkcja pomocnicza: dodaje prefiks folderu, jeśli nazwa pliku nie zawiera ścieżki.
 namespace {
     std::string addFolderPrefix(const std::string& filename, const std::string& folder) {
         if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
@@ -12,7 +11,7 @@ namespace {
             return filename;
     }
 
-    // Funkcja pomocnicza do bezpiecznego parsowania liczby całkowitej z argv.
+
     int parseInt(const char* s, const std::string& flagName) {
         try {
             return std::stoi(s);
@@ -33,11 +32,11 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
         std::cerr << "Błąd: Za mało argumentów dla trybu BENCHMARK MODE." << std::endl;
         exit(1);
     }
-    // Parsowanie obowiązkowych argumentów
+
     algorithm = parseInt(argv[2], "<algorithm>");
     type = parseInt(argv[3], "<type>");
     int currentArg = 4;
-    // Parsowanie flag opcjonalnych: --pivot, --gap, --drunk, --distribution, --runs
+
     while (currentArg < argc && std::string(argv[currentArg]).rfind("--", 0) == 0) {
         std::string flag = argv[currentArg];
         if (flag == "--pivot") {
@@ -84,12 +83,12 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
             break;
         }
     }
-    // Opcjonalny argument outputFile
+
     if (currentArg < argc) {
         std::string rawOutput = argv[currentArg];
         outputFile = addFolderPrefix(rawOutput, "output");
     } else {
-        // Jeśli nie podano outputFile, generujemy nazwę pliku opartą na wprowadzonych parametrach
+
         std::string name = "alg" + std::to_string(algorithm) + "_type" + std::to_string(type);
         if (pivot != -1)
             name += "_pivot" + std::to_string(pivot);
@@ -122,5 +121,5 @@ void BenchmarkMode::run() {
         std::cout << "Runs: " << runs << std::endl;
     std::cout << "Output File: " << outputFile << std::endl;
 
-
+    // TODO: kod wywołujący sortowanie i zapis wyników pomiarów.
 }

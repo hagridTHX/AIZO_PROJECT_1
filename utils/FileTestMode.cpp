@@ -4,7 +4,7 @@
 #include <string>
 
 namespace {
-    // Funkcja pomocnicza dodająca prefiks folderu, jeśli nazwa pliku nie zawiera ścieżki.
+
     std::string addFolderPrefix(const std::string& filename, const std::string& folder) {
         if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
             return folder + "/" + filename;
@@ -12,7 +12,6 @@ namespace {
             return filename;
     }
 
-    // Funkcja pomocnicza do bezpiecznego parsowania liczby całkowitej
     int parseInt(const char* s, const std::string& flagName) {
         try {
             return std::stoi(s);
@@ -33,12 +32,11 @@ FileTestMode::FileTestMode(int argc, char* argv[])
         std::cerr << "Błąd: Za mało argumentów dla trybu FILE TEST MODE." << std::endl;
         exit(1);
     }
-    // Parsowanie obowiązkowych argumentów
+
     algorithm = parseInt(argv[2], "<algorithm>");
     type = parseInt(argv[3], "<type>");
     int currentArg = 4;
 
-    // Parsowanie flag opcjonalnych: --pivot, --gap, --drunk
     while (currentArg < argc && std::string(argv[currentArg]).rfind("--", 0) == 0) {
         std::string flag = argv[currentArg];
         if (flag == "--pivot") {
@@ -71,25 +69,23 @@ FileTestMode::FileTestMode(int argc, char* argv[])
         }
     }
 
-    // Kolejny argument musi być inputFile
     if (currentArg >= argc) {
         std::cerr << "Błąd: Brak argumentu inputFile." << std::endl;
         exit(1);
     }
     inputFile = argv[currentArg++];
 
-    // Opcjonalny argument outputFile; jeżeli nie podano, ustawiamy na [inputFile]OUT.txt
+
     if (currentArg < argc) {
         std::string rawOutput = argv[currentArg];
         outputFile = addFolderPrefix(rawOutput, "output");
     } else {
         outputFile = inputFile + "OUT.txt";
-        // Można dodatkowo dodać prefiks folderu, jeśli chcesz, np.:
-        // outputFile = addFolderPrefix(outputFile, "output");
+
     }
 }
 
-void FileTestMode::run() {
+void FileTestMode::run() const {
     std::cout << "Uruchomienie File Test Mode:" << std::endl;
     std::cout << "Algorithm: " << algorithm << std::endl;
     std::cout << "Type: " << type << std::endl;
@@ -102,5 +98,5 @@ void FileTestMode::run() {
     std::cout << "Input File: " << inputFile << std::endl;
     std::cout << "Output File: " << outputFile << std::endl;
 
-    // TODO: Dodaj kod wywołujący sortowanie i zapis wyników pomiarów.
+    // TODO: kod wywołujący sortowanie i zapis wyników pomiarów.
 }

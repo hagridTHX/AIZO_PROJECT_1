@@ -16,7 +16,7 @@ public:
     // Konstruktor parsujący argumenty dla trybu FILE TEST MODE
     FileTestMode(int argc, char* argv[]);
     // Metoda uruchamiająca operacje trybu FILE TEST MODE (np. sortowanie i zapis wyników)
-    void run();
+    void run() const;
 };
 
 class BenchmarkMode {
