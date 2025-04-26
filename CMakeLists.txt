@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.30)
 project(projektAizo)
 
 set(CMAKE_CXX_STANDARD 20)
+add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Wconversion)
 
 add_executable(projektAizo main.cpp
         utils/Timer.cpp

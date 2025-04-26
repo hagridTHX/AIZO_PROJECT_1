@@ -1,4 +1,6 @@
 #include "Modes.h"
+#include "../algorithm"
+#include "Data.h"
 #include <iostream>
 #include <stdexcept>
 #include <string>
@@ -26,7 +28,7 @@ namespace {
 }
 
 BenchmarkMode::BenchmarkMode(int argc, char* argv[])
-        : algorithm(0), type(0), pivot(-1), gap(-1), drunk(-1), distribution(-1), runs(-1)
+        : algorithm(0), type(0), size(-1), pivot(-1), gap(-1), drunk(-1), distribution(-1), runs(-1)
 {
     if (argc < 5) {
         std::cerr << "Błąd: Za mało argumentów dla trybu BENCHMARK MODE." << std::endl;
@@ -122,4 +124,8 @@ void BenchmarkMode::run() {
     std::cout << "Output File: " << outputFile << std::endl;
 
     // TODO: kod wywołujący sortowanie i zapis wyników pomiarów.
+
+    for (int i = 0; i < runs; ++i) {
+        char* data = DataGenerator::generateData<int>(, distribution);
+    }
 }

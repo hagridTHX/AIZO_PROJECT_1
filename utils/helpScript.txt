@@ -4,7 +4,7 @@ PROGRAM MODES:
    - Odczyt danych z pliku, jednorazowe posortowanie, zapis wyniku
 
    Usage:
-     ./projektAizo --file <algorithm> <type> [--pivot <0..3>] [--gap <0..1>] [--drunk <p>] <inputFile> [outputFile]
+     ./projektAizo --file <algorithm> <type> <inputFile> [outputFile] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..1000}]
 
    Gdzie:
      <> <- obowiązkowy parametr
@@ -17,7 +17,7 @@ PROGRAM MODES:
                   1 - Heap
                   2 - Shell
                   3 - Quick
-                  4 - InsertDrunk
+                  4 - HeapDrunk
 
      <type>       Typ danych do wczytania i posortowania:
 
@@ -34,7 +34,7 @@ PROGRAM MODES:
                           3 - losowy element
 
      --gap <0..1>         Wybór metody generowania odstępów (tylko dla ShellSort):
-``
+
                           0 - Shell'a 1959
                           1 - Frank'a, Lazarus'a 1960
 
@@ -42,6 +42,8 @@ PROGRAM MODES:
                           losowego zaburzania sortowania. Im wyższa wartość p,
                           tym większa szansa na „psucie” porządku.
                           Stosowane tylko w algorytmach z sufiksem „Drunk”.
+                          p ma wartość w promilach i jest w przedziale od 0 do 1000,
+                          gdzie 0 to brak psucia a 1000 to ciągłe psucie.
 
      <inputFile>  Nazwa pliku z danymi do posortowania znajdującego się w folderze input.
 
@@ -54,7 +56,7 @@ PROGRAM MODES:
      zapisywane do pliku (czas, min, max, odchylenie standardowe, itp.)
 
    Usage:
-        ./projektAizo --file <algorithm> <type> [--pivot <0..3>] [--gap <0..1>] [--drunk <p>] [--distribution <distType>] [--runs <N>] [outputFile]
+        ./projektAizo --test <algorithm> <type> <size> <runs> [outputFile] [--distribution <distType>] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..1000}]
 
       Gdzie:
         <> <- obowiązkowy parametr
@@ -67,7 +69,7 @@ PROGRAM MODES:
                      1 - Heap
                      2 - Shell
                      3 - Quick
-                     4 - InsertDrunk
+                     4 - HeapDrunk
 
         <type>       Typ danych do wczytania i posortowania:
 
@@ -75,6 +77,8 @@ PROGRAM MODES:
                      1 - float
                      2 - tablica char[]
                      3 - planszówka
+
+        <size>       Wielkość tablicy do posortowania
 
         --pivot <0..3>       Sposób wyboru pivota (tylko dla QuickSort):
 
@@ -92,6 +96,8 @@ PROGRAM MODES:
                              losowego zaburzania sortowania. Im wyższa wartość p,
                              tym większa szansa na „psucie” porządku.
                              Stosowane tylko w algorytmach z sufiksem „Drunk”.
+                             p ma wartość w promilach i jest w przedziale od 0 do 1000,
+                             gdzie 0 to brak psucia a 1000 to ciągłe psucie.
 
         --distribution <distType>   Rodzaj rozkładu początkowego danych:
 

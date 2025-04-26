@@ -5,7 +5,7 @@
 
 // Funkcja wyświetlająca pomoc (odczyt z pliku utils/helpScript.txt)
 void printHelp() {
-    std::ifstream helpFile("utils/helpScript.txt");
+    std::ifstream helpFile(R"(C:\Users\Lookasz\CLionProjects\AIZO_PROJECT_1\utils\helpScript.txt)");
     if (!helpFile.is_open()) {
         std::cerr << "Nie można otworzyć pliku utils/helpScript.txt" << std::endl;
         return;
@@ -18,7 +18,6 @@ void printHelp() {
 }
 
 int main(int argc, char* argv[]) {
-    // Jeśli brak argumentów lub podano --help, wyświetl pomoc
     if (argc == 1 || (argc > 1 && std::string(argv[1]) == "--help")) {
         printHelp();
         return 0;

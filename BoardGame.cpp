@@ -58,3 +58,31 @@ bool BoardGame::operator<=(const BoardGame &bg) const {
 bool BoardGame::operator==(const BoardGame &bg) const {
     return calculateCoolness() == bg.calculateCoolness();
 }
+
+const char* BoardGame::getName() const {
+    return name;
+}
+
+const char* BoardGame::getPublisher() const {
+    return publisher;
+}
+
+int BoardGame::getMinPlayers() const {
+    return min_players;
+}
+
+int BoardGame::getMaxPlayers() const {
+    return max_players;
+}
+
+int BoardGame::getDuration() const {
+    return duration_minutes;
+}
+
+int BoardGame::getComplexity() const {
+    return complexity_level;
+}
+
+int BoardGame::getJoy() const {
+    return joy_level;
+}

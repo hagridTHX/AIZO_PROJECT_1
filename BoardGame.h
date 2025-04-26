@@ -1,7 +1,3 @@
-//
-// Created by Franek on 23.03.2025.
-//
-
 #ifndef PROJEKTAIZO_BOARDGAME_H
 #define PROJEKTAIZO_BOARDGAME_H
 
@@ -15,7 +11,7 @@ private:
     int complexity_level; // 1 - 10
     int joy_level;        // 1 - 10
 
-    [[nodiscard]] int countA() const;
+    int countA() const;
 
 public:
     BoardGame(const char* nm, const char* pub, int minP, int maxP, int dur, int complexity, int joy);
@@ -25,6 +21,14 @@ public:
     bool operator>=(const BoardGame& bg) const;
     bool operator<=(const BoardGame& bg) const;
     bool operator==(const BoardGame& bg) const;
+
+    const char* getName() const;
+    const char* getPublisher() const;
+    int getMinPlayers() const;
+    int getMaxPlayers() const;
+    int getDuration() const;
+    int getComplexity() const;
+    int getJoy() const;
 };
 
 #endif //PROJEKTAIZO_BOARDGAME_H

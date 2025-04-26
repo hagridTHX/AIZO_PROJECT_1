@@ -23,6 +23,7 @@ class BenchmarkMode {
 public:
     int algorithm;
     int type;
+    int size;
     int pivot;
     int gap;
     int drunk;
