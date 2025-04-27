@@ -1,7 +1,19 @@
+# IDE folders
+.idea/
+*.iml
+
 # Prerequisites
 *.d
 cmake-build-debug/
+cmake-build-release/
+build/
 
+# CMake generated
+CMakeFiles/
+CMakeCache.txt
+Makefile
+cmake_install.cmake
+compile_commands.json
 
 # Compiled Object files
 *.slo
@@ -32,3 +44,7 @@ cmake-build-debug/
 *.exe
 *.out
 *.app
+
+# System files
+.DS_Store
+Thumbs.db
