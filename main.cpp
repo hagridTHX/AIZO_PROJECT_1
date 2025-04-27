@@ -3,9 +3,8 @@
 #include <string>
 #include "utils/Modes.h"
 
-// Funkcja wyświetlająca pomoc (odczyt z pliku utils/helpScript.txt)
 void printHelp() {
-    std::ifstream helpFile(R"(C:\Users\Lookasz\CLionProjects\AIZO_PROJECT_1\utils\helpScript.txt)");
+    std::ifstream helpFile("utils/helpScript.txt");
     if (!helpFile.is_open()) {
         std::cerr << "Nie można otworzyć pliku utils/helpScript.txt" << std::endl;
         return;
@@ -30,6 +29,7 @@ int main(int argc, char* argv[]) {
     } else if (mode == "--test") {
         BenchmarkMode benchmarkMode(argc, argv);
         benchmarkMode.run();
+
     } else {
         std::cerr << "Błąd: Nieznany tryb. Użyj --help aby uzyskać pomoc." << std::endl;
         return 1;

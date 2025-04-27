@@ -3,6 +3,7 @@
 
 class BoardGame {
 private:
+
     char name[26]{}; // ostatni znak to \0
     char publisher[26]{};
     int min_players;      // min 1
@@ -12,10 +13,14 @@ private:
     int joy_level;        // 1 - 10
 
     int countA() const;
+    double calculateCoolness() const;
 
 public:
+
+    BoardGame();
     BoardGame(const char* nm, const char* pub, int minP, int maxP, int dur, int complexity, int joy);
-    [[nodiscard]] double calculateCoolness() const;
+    ~BoardGame();
+
     bool operator>(const BoardGame& bg) const;
     bool operator<(const BoardGame& bg) const;
     bool operator>=(const BoardGame& bg) const;

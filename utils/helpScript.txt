@@ -4,7 +4,7 @@ PROGRAM MODES:
    - Odczyt danych z pliku, jednorazowe posortowanie, zapis wyniku
 
    Usage:
-     ./projektAizo --file <algorithm> <type> <inputFile> [outputFile] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..1000}]
+     ./projektAizo --file <algorithm> <type> <inputFile> [outputFile] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..10000}]
 
    Gdzie:
      <> <- obowiązkowy parametr
@@ -26,6 +26,11 @@ PROGRAM MODES:
                   2 - tablica char[]
                   3 - planszówka
 
+     <inputFile>        Nazwa pliku z danymi do posortowania znajdującego się w folderze input.
+
+     [outputFile]       opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
+                        Brak argumentu ustawi nazwę tego pliku na [<inputFile> + OUT].txt.
+
      --pivot <0..3>       Sposób wyboru pivota (tylko dla QuickSort):
 
                           0 - pierwszy element
@@ -42,13 +47,13 @@ PROGRAM MODES:
                           losowego zaburzania sortowania. Im wyższa wartość p,
                           tym większa szansa na „psucie” porządku.
                           Stosowane tylko w algorytmach z sufiksem „Drunk”.
-                          p ma wartość w promilach i jest w przedziale od 0 do 1000,
-                          gdzie 0 to brak psucia a 1000 to ciągłe psucie.
+                          p wyrażony jest w dziesiątych częściach promila i przyjmuje wartości
+                          w zakresie od 0 do 10000, gdzie:
+                              - 0 oznacza brak zaburzeń,
+                              - 10000 oznacza 100% szansy na zaburzenie każdej operacji.
 
-     <inputFile>  Nazwa pliku z danymi do posortowania znajdującego się w folderze input.
 
-     [outputFile] opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
-                  Brak argumentu ustawi nazwę tego pliku na [<inputFile> + OUT].txt.
+
 
 -------------------------------------------------------------------------------
 2) BENCHMARK MODE
@@ -56,7 +61,7 @@ PROGRAM MODES:
      zapisywane do pliku (czas, min, max, odchylenie standardowe, itp.)
 
    Usage:
-        ./projektAizo --test <algorithm> <type> <size> <runs> [outputFile] [--distribution <distType>] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..1000}]
+        ./projektAizo --test <algorithm> <type> <size> <runs> [outputFile] [--distribution {0..4}] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..10000}]
 
       Gdzie:
         <> <- obowiązkowy parametr
@@ -80,6 +85,20 @@ PROGRAM MODES:
 
         <size>       Wielkość tablicy do posortowania
 
+        <runs>                  Liczba powtórzeń w celu uśrednienia wyników
+                             (np. 100, aby uzyskać miarodajne wyniki).
+
+        [outputFile]         opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
+                             Brak argumentu ustawi nazwę tego pliku na [wprowadzone parametry].txt.
+
+        --distribution <distType>   Rodzaj rozkładu początkowego danych:
+
+                                     0 - losowy
+                                     1 - rosnący
+                                     2 - malejący
+                                     3 - posortowany częściowo w 33%
+                                     4 - posortowany częściowo w 66%
+
         --pivot <0..3>       Sposób wyboru pivota (tylko dla QuickSort):
 
                              0 - pierwszy element
@@ -96,22 +115,10 @@ PROGRAM MODES:
                              losowego zaburzania sortowania. Im wyższa wartość p,
                              tym większa szansa na „psucie” porządku.
                              Stosowane tylko w algorytmach z sufiksem „Drunk”.
-                             p ma wartość w promilach i jest w przedziale od 0 do 1000,
-                             gdzie 0 to brak psucia a 1000 to ciągłe psucie.
-
-        --distribution <distType>   Rodzaj rozkładu początkowego danych:
-
-                             0 - losowy
-                             1 - rosnący
-                             2 - malejący
-                             3 - posortowany częściowo w 33%
-                             4 - posortowany częściowo w 66%
-
-        --runs <N>           Liczba powtórzeń w celu uśrednienia wyników
-                                  (np. 100, aby uzyskać miarodajne wyniki).
-
-        [outputFile] opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
-                     Brak argumentu ustawi nazwę tego pliku na [wprowadzone parametry].txt.
+                             p wyrażony jest w dziesiątych częściach promila i przyjmuje wartości
+                             w zakresie od 0 do 10000, gdzie:
+                                 - 0 oznacza brak zaburzeń,
+                                 - 10000 oznacza 100% szansy na zaburzenie każdej operacji.
 
 -------------------------------------------------------------------------------
 3) HELP MODE
@@ -124,39 +131,47 @@ PROGRAM MODES:
      argumenty wejściowe.
 
 -------------------------------------------------------------------------------
-UWAGI DODATKOWE (WERSJA 5.5):
+UWAGI DODATKOWE
+
 -pliki wejściowe i wyjściowe domyślnie będą w folderach odpowiednio /input, /output
 
 -------------------------------------------------------------------------------
 EXAMPLE CALLS:
 
 FILE TEST MODE:
-1) InsertSort (algorithm=0), typ int (type=0), wczytanie z pliku intData.txt
-   i zapis do intDataSorted.txt:
+
+1) InsertSort (algorithm=0), typ int (type=0), plik intData.txt, wynik do intDataSorted.txt:
    ./projektAizo --file 0 0 intData.txt intDataSorted.txt
 
 2) QuickSort (algorithm=3), typ float (type=1), pivot = ostatni element (pivot=2),
-   wczytanie z pliku floats.txt, brak podanego pliku wyjściowego:
-   ./projektAizo --file 3 1 --pivot 2 floats.txt
+   plik floats.txt, wynik domyślny:
+   ./projektAizo --file 3 1 floats.txt --pivot 2
 
-3) InsertDrunk (algorithm=4), typ boardGame (type=3), parametr p=5 (drunk=5),
-   wczytanie z pliku boardgames.txt i zapis do boardgamesOut.txt:
-   ./projektAizo --file 4 3 --drunk 5 boardgames.txt boardgamesOut.txt
+3) HeapDrunk (algorithm=4), typ planszówka (type=3), pijany student (drunk=5),
+   plik boardgames.txt, wynik do boardgamesOut.txt:
+   ./projektAizo --file 4 3 boardgames.txt boardgamesOut.txt --drunk 5
+
+4) ShellSort (algorithm=2), typ tablica znaków (type=2), gap=1 (Frank'a, Lazarus'a 1960),
+   plik charArray.txt, wynik domyślny:
+   ./projektAizo --file 2 2 charArray.txt --gap 1
 
 
 BENCHMARK MODE:
-1) InsertSort (algorithm=0), typ int (type=0), losowy rozkład (distribution=0),
-   100 powtórzeń (runs=100), brak pliku wyjściowego:
-   ./projektAizo --test 0 0 --distribution 0 --runs 100
+
+1) InsertSort (algorithm=0), typ int (type=0), tablica 10000 elementów,
+   100 powtórzeń, losowy rozkład (distribution=0), wynik domyślny:
+   ./projektAizo --test 0 0 10000 100 --distribution 0
 
 2) QuickSort (algorithm=3), typ float (type=1), pivot losowy (pivot=3),
-   rozkład malejący (distribution=2), 50 powtórzeń (runs=50),
-   zapis do bench_floats.txt:
-   ./projektAizo --test 3 1 --pivot 3 --distribution 2 --runs 50 bench_floats.txt
+   rozkład malejący (distribution=2), 50 powtórzeń, wynik do bench_floats.txt:
+   ./projektAizo --test 3 1 50000 50 bench_floats.txt --pivot 3 --distribution 2
 
-3) ShellSort (algorithm=2), typ tablica char[] (type=2), gap=1 (Frank'a, Lazarus'a 1960),
-   rozkład częściowo posortowany w 66% (distribution=4), 30 powtórzeń (runs=30),
-   zapis do bench_strings.txt:
-   ./projektAizo --test 2 2 --gap 1 --distribution 4 --runs 30 bench_strings.txt
+3) ShellSort (algorithm=2), typ tablica znaków (type=2), gap=1,
+   rozkład częściowo posortowany 66% (distribution=4), 30 powtórzeń, wynik domyślny:
+   ./projektAizo --test 2 2 20000 30 --gap 1 --distribution 4
+
+4) HeapDrunk (algorithm=4), typ planszówka (type=3),
+   15000 elementów, 80 powtórzeń, pijany student (drunk=100), rozkład losowy:
+   ./projektAizo --test 4 3 15000 80 --drunk 100 --distribution 0
 
 -------------------------------------------------------------------------------

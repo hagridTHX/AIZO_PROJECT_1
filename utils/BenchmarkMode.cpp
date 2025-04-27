@@ -1,52 +1,37 @@
 #include "Modes.h"
-#include "../algorithm"
-#include "Data.h"
+#include "../algorithms/SortingAlgorithms.h"
+#include "Timer.h"
+#include "../BoardGame.h"
+#include "DataHandler.h"
+#include "DataGenerator.h"
 #include <iostream>
 #include <stdexcept>
 #include <string>
 
-namespace {
-    std::string addFolderPrefix(const std::string& filename, const std::string& folder) {
-        if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
-            return folder + "/" + filename;
-        else
-            return filename;
-    }
-
-
-    int parseInt(const char* s, const std::string& flagName) {
-        try {
-            return std::stoi(s);
-        } catch (const std::invalid_argument&) {
-            std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
-            exit(1);
-        } catch (const std::out_of_range&) {
-            std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";
-            exit(1);
-        }
-    }
-}
-
 BenchmarkMode::BenchmarkMode(int argc, char* argv[])
-        : algorithm(0), type(0), size(-1), pivot(-1), gap(-1), drunk(-1), distribution(-1), runs(-1)
+        : algorithm(-1), type(-1), size(-1), pivot(-1), gap(-1), drunk(-1), distribution(-1), runs(-1)
 {
-    if (argc < 5) {
-        std::cerr << "Błąd: Za mało argumentów dla trybu BENCHMARK MODE." << std::endl;
+    if (argc < 7) {
+        std::cerr << "Błąd: Za mało argumentów dla trybu BENCHMARK MODE.\n";
         exit(1);
     }
 
     algorithm = parseInt(argv[2], "<algorithm>");
     type = parseInt(argv[3], "<type>");
-    int currentArg = 4;
+    size = parseInt(argv[4], "<size>");
+    runs = parseInt(argv[5], "<runs>");
 
-    while (currentArg < argc && std::string(argv[currentArg]).rfind("--", 0) == 0) {
+    int currentArg = 6;
+
+    while (currentArg < argc) {
         std::string flag = argv[currentArg];
+
         if (flag == "--pivot") {
             if (currentArg + 1 < argc) {
                 pivot = parseInt(argv[currentArg + 1], "--pivot");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --pivot." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --pivot.\n";
                 exit(1);
             }
         } else if (flag == "--gap") {
@@ -54,7 +39,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
                 gap = parseInt(argv[currentArg + 1], "--gap");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --gap." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --gap.\n";
                 exit(1);
             }
         } else if (flag == "--drunk") {
@@ -62,7 +47,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
                 drunk = parseInt(argv[currentArg + 1], "--drunk");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --drunk." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --drunk.\n";
                 exit(1);
             }
         } else if (flag == "--distribution") {
@@ -70,7 +55,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
                 distribution = parseInt(argv[currentArg + 1], "--distribution");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --distribution." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --distribution.\n";
                 exit(1);
             }
         } else if (flag == "--runs") {
@@ -78,54 +63,146 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
                 runs = parseInt(argv[currentArg + 1], "--runs");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --runs." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --runs.\n";
                 exit(1);
             }
         } else {
-            break;
+            if (outputFile.empty()) {
+                outputFile = addFolderPrefix(argv[currentArg], "output");
+                ++currentArg;
+            } else {
+                std::cerr << "Błąd: Niezrozumiały dodatkowy argument: " << argv[currentArg] << "\n";
+                exit(1);
+            }
         }
     }
 
-    if (currentArg < argc) {
-        std::string rawOutput = argv[currentArg];
-        outputFile = addFolderPrefix(rawOutput, "output");
-    } else {
+    if (outputFile.empty()) {
+        std::string name = "alg" + std::to_string(algorithm) +
+                           "_type" + std::to_string(type) +
+                           "_size" + std::to_string(size) +
+                           "_runs" + std::to_string(runs);
 
-        std::string name = "alg" + std::to_string(algorithm) + "_type" + std::to_string(type);
-        if (pivot != -1)
-            name += "_pivot" + std::to_string(pivot);
-        if (gap != -1)
-            name += "_gap" + std::to_string(gap);
-        if (drunk != -1)
-            name += "_drunk" + std::to_string(drunk);
-        if (distribution != -1)
-            name += "_dist" + std::to_string(distribution);
-        if (runs != -1)
-            name += "_runs" + std::to_string(runs);
+        if (pivot != -1) name += "_pivot" + std::to_string(pivot);
+        if (gap != -1) name += "_gap" + std::to_string(gap);
+        if (drunk != -1) name += "_drunk" + std::to_string(drunk);
+        if (distribution != -1) name += "_dist" + std::to_string(distribution);
+
         name += ".txt";
         outputFile = addFolderPrefix(name, "output");
     }
 }
 
-void BenchmarkMode::run() {
-    std::cout << "Uruchomienie Benchmark Mode:" << std::endl;
-    std::cout << "Algorithm: " << algorithm << std::endl;
-    std::cout << "Type: " << type << std::endl;
-    if (pivot != -1)
-        std::cout << "Pivot: " << pivot << std::endl;
-    if (gap != -1)
-        std::cout << "Gap: " << gap << std::endl;
-    if (drunk != -1)
-        std::cout << "Drunk: " << drunk << std::endl;
-    if (distribution != -1)
-        std::cout << "Distribution: " << distribution << std::endl;
-    if (runs != -1)
-        std::cout << "Runs: " << runs << std::endl;
-    std::cout << "Output File: " << outputFile << std::endl;
+void BenchmarkMode::run() const {
+    std::cout << "Uruchamianie Benchmark Mode:\n";
+    std::cout << "Algorithm: " << algorithm << "\n";
+    std::cout << "Type: " << type << "\n";
+    std::cout << "Size: " << size << "\n";
+    std::cout << "Runs: " << runs << "\n";
+    if (pivot != -1) std::cout << "Pivot: " << pivot << "\n";
+    if (gap != -1) std::cout << "Gap: " << gap << "\n";
+    if (drunk != -1) std::cout << "Drunk: " << drunk << "\n";
+    if (distribution != -1) std::cout << "Distribution: " << distribution << "\n";
+    std::cout << "Output file: " << outputFile << "\n";
 
-    // TODO: kod wywołujący sortowanie i zapis wyników pomiarów.
+    int* times = new int[runs];
+    int unsortedCount = 0;
 
     for (int i = 0; i < runs; ++i) {
-        char* data = DataGenerator::generateData<int>(, distribution);
+        DataGenerator generator(distribution, size);
+
+        if (type == 0) {
+            int* data = generator.generateData<int>();
+            SortingAlgorithms<int> sorter(data, algorithm, size, pivot, gap, drunk);
+
+            Timer timer;
+            times[i] = sorter.sort(timer);
+
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++unsortedCount;
+                ++retries;
+                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
+                Timer retryTimer;
+                times[i] += sorter.sort(retryTimer);
+            }
+            delete[] data;
+        } else if (type == 1) {
+            float* data = generator.generateData<float>();
+            SortingAlgorithms<float> sorter(data, algorithm, size, pivot, gap, drunk);
+
+            Timer timer;
+            times[i] = sorter.sort(timer);
+
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++unsortedCount;
+                ++retries;
+                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
+                Timer retryTimer;
+                times[i] += sorter.sort(retryTimer);
+            }
+            delete[] data;
+        } else if (type == 2) {
+            char* data = generator.generateData<char>();
+            SortingAlgorithms<char> sorter(data, algorithm, size, pivot, gap, drunk);
+
+            Timer timer;
+            times[i] = sorter.sort(timer);
+
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++unsortedCount;
+                ++retries;
+                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
+                Timer retryTimer;
+                times[i] += sorter.sort(retryTimer);
+            }
+            delete[] data;
+        } else if (type == 3) {
+            BoardGame* data = generator.generateData<BoardGame>();
+            SortingAlgorithms<BoardGame> sorter(data, algorithm, size, pivot, gap, drunk);
+
+            Timer timer;
+            times[i] = sorter.sort(timer);
+
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++unsortedCount;
+                ++retries;
+                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
+                Timer retryTimer;
+                times[i] += sorter.sort(retryTimer);
+            }
+            delete[] data;
+        } else {
+            delete[] times;
+            exit(1);
+        }
     }
+
+    DataHandler handler(outputFile);
+    handler.writeBenchmarkResult(algorithm, type, size, runs, pivot, gap, drunk, distribution, times, unsortedCount);
+
+    delete[] times;
+}
+
+
+int BenchmarkMode::parseInt(const char* s, const std::string& flagName) {
+    try {
+        return std::stoi(s);
+    } catch (const std::invalid_argument&) {
+        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
+        exit(1);
+    } catch (const std::out_of_range&) {
+        std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";
+        exit(1);
+    }
+}
+
+std::string BenchmarkMode::addFolderPrefix(const std::string& filename, const std::string& folder) {
+    if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
+        return folder + "/" + filename;
+    else
+        return filename;
 }

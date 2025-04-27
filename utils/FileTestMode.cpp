@@ -1,35 +1,16 @@
 #include "Modes.h"
+#include "../algorithms/SortingAlgorithms.h"
+#include "DataHandler.h"
+#include "Timer.h"
 #include <iostream>
 #include <stdexcept>
-#include <string>
-
-namespace {
-
-    std::string addFolderPrefix(const std::string& filename, const std::string& folder) {
-        if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
-            return folder + "/" + filename;
-        else
-            return filename;
-    }
-
-    int parseInt(const char* s, const std::string& flagName) {
-        try {
-            return std::stoi(s);
-        } catch (const std::invalid_argument&) {
-            std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
-            exit(1);
-        } catch (const std::out_of_range&) {
-            std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";
-            exit(1);
-        }
-    }
-}
+#include <filesystem>
 
 FileTestMode::FileTestMode(int argc, char* argv[])
-        : algorithm(0), type(0), pivot(-1), gap(-1), drunk(-1)
+        : algorithm(-1), type(-1), pivot(-1), gap(-1), drunk(-1)
 {
     if (argc < 5) {
-        std::cerr << "Błąd: Za mało argumentów dla trybu FILE TEST MODE." << std::endl;
+        std::cerr << "Błąd: Za mało argumentów dla trybu FILE TEST MODE.\n";
         exit(1);
     }
 
@@ -37,14 +18,34 @@ FileTestMode::FileTestMode(int argc, char* argv[])
     type = parseInt(argv[3], "<type>");
     int currentArg = 4;
 
-    while (currentArg < argc && std::string(argv[currentArg]).rfind("--", 0) == 0) {
+    if (currentArg >= argc) {
+        std::cerr << "Błąd: Brak inputFile.\n";
+        exit(1);
+    }
+    inputFile = addFolderPrefix(argv[currentArg++], "input");
+
+    if (currentArg < argc && argv[currentArg][0] != '-') {
+        outputFile = addFolderPrefix(argv[currentArg++], "output");
+    } else {
+        std::string inputFilenameOnly = std::filesystem::path(inputFile).filename().string();
+        size_t dotPos = inputFilenameOnly.rfind('.');
+        if (dotPos != std::string::npos) {
+            inputFilenameOnly.insert(dotPos, "OUT");
+        } else {
+            inputFilenameOnly += "OUT";
+        }
+        outputFile = addFolderPrefix(inputFilenameOnly, "output");
+    }
+
+    while (currentArg < argc) {
         std::string flag = argv[currentArg];
+
         if (flag == "--pivot") {
             if (currentArg + 1 < argc) {
                 pivot = parseInt(argv[currentArg + 1], "--pivot");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --pivot." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --pivot.\n";
                 exit(1);
             }
         } else if (flag == "--gap") {
@@ -52,7 +53,7 @@ FileTestMode::FileTestMode(int argc, char* argv[])
                 gap = parseInt(argv[currentArg + 1], "--gap");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --gap." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --gap.\n";
                 exit(1);
             }
         } else if (flag == "--drunk") {
@@ -60,43 +61,74 @@ FileTestMode::FileTestMode(int argc, char* argv[])
                 drunk = parseInt(argv[currentArg + 1], "--drunk");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --drunk." << std::endl;
+                std::cerr << "Błąd: Brak wartości dla flagi --drunk.\n";
                 exit(1);
             }
         } else {
-            std::cerr << "Błąd: Nieznany parametr: " << flag << std::endl;
+            std::cerr << "Błąd: Nieznana flaga lub parametr: " << flag << "\n";
             exit(1);
         }
-    }
-
-    if (currentArg >= argc) {
-        std::cerr << "Błąd: Brak argumentu inputFile." << std::endl;
-        exit(1);
-    }
-    inputFile = argv[currentArg++];
-
-
-    if (currentArg < argc) {
-        std::string rawOutput = argv[currentArg];
-        outputFile = addFolderPrefix(rawOutput, "output");
-    } else {
-        outputFile = inputFile + "OUT.txt";
-
     }
 }
 
 void FileTestMode::run() const {
-    std::cout << "Uruchomienie File Test Mode:" << std::endl;
-    std::cout << "Algorithm: " << algorithm << std::endl;
-    std::cout << "Type: " << type << std::endl;
-    if (pivot != -1)
-        std::cout << "Pivot: " << pivot << std::endl;
-    if (gap != -1)
-        std::cout << "Gap: " << gap << std::endl;
-    if (drunk != -1)
-        std::cout << "Drunk: " << drunk << std::endl;
-    std::cout << "Input File: " << inputFile << std::endl;
-    std::cout << "Output File: " << outputFile << std::endl;
+    std::cout << "Uruchamianie File Test Mode:\n";
+    std::cout << "Algorithm: " << algorithm << "\n";
+    std::cout << "Type: " << type << "\n";
+    if (pivot != -1) std::cout << "Pivot: " << pivot << "\n";
+    if (gap != -1) std::cout << "Gap: " << gap << "\n";
+    if (drunk != -1) std::cout << "Drunk: " << drunk << "\n";
+    std::cout << "Input File: " << inputFile << "\n";
+    std::cout << "Output File: " << outputFile << "\n";
 
-    // TODO: kod wywołujący sortowanie i zapis wyników pomiarów.
+    Timer timer;
+    DataHandler handler(inputFile, outputFile);
+
+    if (type == 0) {
+        int* data = handler.readFromFile<int>();
+        SortingAlgorithms<int> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+        sorter.sort(timer);
+        handler.writeToFile(data, handler.getSize());
+        delete[] data;
+    } else if (type == 1) {
+        float* data = handler.readFromFile<float>();
+        SortingAlgorithms<float> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+        sorter.sort(timer);
+        handler.writeToFile(data, handler.getSize());
+        delete[] data;
+    } else if (type == 2) {
+        char* data = handler.readFromFile<char>();
+        SortingAlgorithms<char> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+        sorter.sort(timer);
+        handler.writeToFile(data, handler.getSize());
+        delete[] data;
+    } else if (type == 3) {
+        BoardGame* data = handler.readFromFile<BoardGame>();
+        SortingAlgorithms<BoardGame> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+        sorter.sort(timer);
+        handler.writeToFile(data, handler.getSize());
+        delete[] data;
+    } else {
+        std::cerr << "Błąd: Nieznany typ danych.\n";
+        exit(1);
+    }
+}
+
+int FileTestMode::parseInt(const char* s, const std::string& flagName) {
+    try {
+        return std::stoi(s);
+    } catch (const std::invalid_argument&) {
+        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
+        exit(1);
+    } catch (const std::out_of_range&) {
+        std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";
+        exit(1);
+    }
+}
+
+std::string FileTestMode::addFolderPrefix(const std::string& filename, const std::string& folder) {
+    if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
+        return folder + "/" + filename;
+    else
+        return filename;
 }

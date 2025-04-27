@@ -1,7 +1,6 @@
 #include "BoardGame.h"
 #include <cstring>
 
-// pomocnicza metoda do zliczania litery 'a' w nazwie wydawcy na potrzeby testów
 int BoardGame::countA() const {
     int counter = 0;
     for (int i = 0; publisher[i] != '\0'; ++i)
@@ -10,7 +9,9 @@ int BoardGame::countA() const {
     return counter;
 }
 
-// konstruktor z kopiowaniem ciągów znaków
+BoardGame::BoardGame()
+        : name(""), publisher(""), min_players(0), max_players(0), duration_minutes(0), complexity_level(0), joy_level(0) {}
+
 BoardGame::BoardGame(const char* nm, const char* pub, int minP, int maxP, int dur, int complexity, int joy)
         : min_players(minP), max_players(maxP), duration_minutes(dur),
           complexity_level(complexity), joy_level(joy) {
@@ -26,7 +27,8 @@ BoardGame::BoardGame(const char* nm, const char* pub, int minP, int maxP, int du
     publisher[i] = '\0';
 }
 
-// obliczanie fajności
+BoardGame::~BoardGame() {};
+
 double BoardGame::calculateCoolness() const {
     double avg_players = (min_players + max_players) / 2.0;
     double base_coolness = (double(joy_level) / complexity_level) * (countA() + 1);

@@ -2,45 +2,198 @@
 #define PROJEKTAIZO_SORTINGALGORITHMS_H
 
 #include "../utils/Timer.h"
+#include <cstdlib>  // rand
+#include <random>
 
-// Klasa zawierająca algorytmy sortujące
+template<typename T>
 class SortingAlgorithms {
+private:
+    T* arr;
+    int algorithm;
+    int size;
+    int pivot;
+    int gap;
+    int drunk;
+
 public:
-    // Sortowanie przez wstawianie
-    template<typename T>
-    static int insertionSort(T arr[], int n, Timer& timer);
+    SortingAlgorithms(T* _arr, int _algorithm, int _size, int _pivot = -1, int _gap = -1, int _drunk = -1);
+    ~SortingAlgorithms();
 
-    // Sortowanie przez kopcowanie
-    template<typename T>
-    static int heapSort(T arr[], int n, Timer& timer);
+    int sort(Timer& timer);
+    int insertionSort(Timer& timer);
+    int heapSort(Timer& timer);
+    int shellSort(Timer& timer);
+    int quickSort(Timer& timer);
+    int heapDrunkSort(Timer& timer);
 
-    // Sortowanie Shella
-    //gapMethod: 0 - Shell 1959, 1 - Frank & Lazarus 1960
-    template<typename T>
-    static int shellSort(T arr[], int n, int gapMethod, Timer& timer);
-
-    // Quicksort
-    //positionType: 0 - pierwszy, 1 - środkowy, 2 - ostatni, 3 - losowy
-    template<typename T>
-    static int quickSort(T arr[], int n, int pivotType, Timer& timer);
-
-    // HeapDrunkSort (p w promilach: 0–1000)
-    template<typename T>
-    static int heapDrunkSort(T arr[], int n, int p, Timer& timer);
-
-    template<typename T>
-    static bool isSorted(const T arr[], int n);
+    bool isSorted() const;
 
 private:
-    // Pomocnicze metody
-    template<typename T>
-    static void siftDown(T arr[], int i, int n);
-
-    template<typename T>
-    static int partition(T arr[], int low, int high, int pivotType);
-
-    template<typename T>
-    static void quickSortRec(T arr[], int low, int high, int pivotType);
+    void siftDown(int i, int n);
+    int partition(int low, int high);
+    void quickSortRec(int low, int high);
 };
 
-#endif
+// Implementacja
+
+template<typename T>
+SortingAlgorithms<T>::SortingAlgorithms(T* _arr, int _algorithm, int _size, int _pivot, int _gap, int _drunk)
+        : arr(_arr), algorithm(_algorithm), size(_size), pivot(_pivot), gap(_gap), drunk(_drunk) {}
+
+template<typename T>
+SortingAlgorithms<T>::~SortingAlgorithms() {}
+
+template<typename T>
+int SortingAlgorithms<T>::sort(Timer& timer) {
+    switch (algorithm) {
+        case 0: return insertionSort(timer);
+        case 1: return heapSort(timer);
+        case 2: return shellSort(timer);
+        case 3: return quickSort(timer);
+        case 4: return heapDrunkSort(timer);
+        default:
+            printf("Wrong number for algorithm\n");
+            exit(1);
+    }
+}
+
+template<typename T>
+int SortingAlgorithms<T>::insertionSort(Timer& timer) {
+    timer.reset(); timer.start();
+    for (int i = 1; i < size; ++i) {
+        T key = arr[i];
+        int j = i - 1;
+        while (j >= 0 && arr[j] > key) {
+            arr[j + 1] = arr[j];
+            --j;
+        }
+        arr[j + 1] = key;
+    }
+    timer.stop();
+    return timer.result();
+}
+
+template<typename T>
+void SortingAlgorithms<T>::siftDown(int i, int n) {
+    int largest = i;
+    int l = 2 * i + 1;
+    int r = 2 * i + 2;
+    if (l < n && arr[l] > arr[largest]) largest = l;
+    if (r < n && arr[r] > arr[largest]) largest = r;
+    if (largest != i) {
+        T temp = arr[i];
+        arr[i] = arr[largest];
+        arr[largest] = temp;
+        siftDown(largest, n);
+    }
+}
+
+template<typename T>
+int SortingAlgorithms<T>::heapSort(Timer& timer) {
+    timer.reset(); timer.start();
+    for (int i = size / 2 - 1; i >= 0; --i) siftDown(i, size);
+    for (int end = size - 1; end > 0; --end) {
+        T temp = arr[0];
+        arr[0] = arr[end];
+        arr[end] = temp;
+        siftDown(0, end);
+    }
+    timer.stop();
+    return timer.result();
+}
+
+template<typename T>
+int SortingAlgorithms<T>::shellSort(Timer& timer) {
+    timer.reset(); timer.start();
+    int g = (gap == 1 ? 1 : size / 2);
+    if (gap == 1) while (g < size) g = 3 * g + 1;
+    for (; g > 0; g = (gap == 1 ? g / 3 : g / 2)) {
+        for (int i = g; i < size; ++i) {
+            T temp = arr[i];
+            int j = i;
+            while (j >= g && arr[j - g] > temp) {
+                arr[j] = arr[j - g];
+                j -= g;
+            }
+            arr[j] = temp;
+        }
+    }
+    timer.stop();
+    return timer.result();
+}
+
+template<typename T>
+int SortingAlgorithms<T>::partition(int low, int high) {
+    T piv;
+    if (pivot == 3) {
+        static std::mt19937 rng(std::random_device{}());
+        std::uniform_int_distribution<int> dist(low, high);
+        int randomIndex = dist(rng);
+        piv = arr[randomIndex];
+    } else if (pivot == 1) {
+        piv = arr[low + (high - low) / 2];
+    } else if (pivot == 2) {
+        piv = arr[high];
+    } else {
+        piv = arr[low];
+    }
+
+    int i = low - 1;
+    int j = high + 1;
+    while (true) {
+        do { ++i; } while (arr[i] < piv);
+        do { --j; } while (arr[j] > piv);
+        if (i >= j) return j;
+        T temp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = temp;
+    }
+}
+
+template<typename T>
+void SortingAlgorithms<T>::quickSortRec(int low, int high) {
+    if (low < high) {
+        int p = partition(low, high);
+        quickSortRec(low, p);
+        quickSortRec(p + 1, high);
+    }
+}
+
+template<typename T>
+int SortingAlgorithms<T>::quickSort(Timer& timer) {
+    timer.reset(); timer.start();
+    quickSortRec(0, size - 1);
+    timer.stop();
+    return timer.result();
+}
+
+template<typename T>
+int SortingAlgorithms<T>::heapDrunkSort(Timer& timer) {
+    timer.reset(); timer.start();
+    for (int i = size / 2 - 1; i >= 0; --i) siftDown(i, size);
+    for (int end = size - 1; end > 0; --end) {
+        T temp = arr[0];
+        arr[0] = arr[end];
+        arr[end] = temp;
+        if (std::rand() % 10000 < drunk) {
+            int i1 = std::rand() % size;
+            int i2 = std::rand() % size;
+            T t = arr[i1];
+            arr[i1] = arr[i2];
+            arr[i2] = t;
+        }
+        siftDown(0, end);
+    }
+    timer.stop();
+    return timer.result();
+}
+
+template<typename T>
+bool SortingAlgorithms<T>::isSorted() const {
+    for (int i = 1; i < size; ++i) {
+        if (arr[i - 1] > arr[i]) return false;
+    }
+    return true;
+}
+
+#endif // PROJEKTAIZO_SORTINGALGORITHMS_H

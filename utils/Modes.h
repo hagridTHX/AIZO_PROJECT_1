@@ -13,10 +13,12 @@ public:
     std::string inputFile;
     std::string outputFile;
 
-    // Konstruktor parsujący argumenty dla trybu FILE TEST MODE
     FileTestMode(int argc, char* argv[]);
-    // Metoda uruchamiająca operacje trybu FILE TEST MODE (np. sortowanie i zapis wyników)
     void run() const;
+
+private:
+    static int parseInt(const char* s, const std::string& flagName);
+    static std::string addFolderPrefix(const std::string& filename, const std::string& folder);
 };
 
 class BenchmarkMode {
@@ -31,10 +33,12 @@ public:
     int runs;
     std::string outputFile;
 
-    // Konstruktor parsujący argumenty dla trybu BENCHMARK MODE
     BenchmarkMode(int argc, char* argv[]);
-    // Metoda uruchamiająca operacje trybu BENCHMARK MODE (np. generowanie danych, pomiary i zapis wyników)
-    void run();
+    void run() const;
+
+private:
+    static int parseInt(const char* s, const std::string& flagName);
+    static std::string addFolderPrefix(const std::string& filename, const std::string& folder);
 };
 
 #endif // MODES_H
