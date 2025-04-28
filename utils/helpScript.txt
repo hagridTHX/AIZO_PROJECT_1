@@ -4,7 +4,7 @@ PROGRAM MODES:
    - Odczyt danych z pliku, jednorazowe posortowanie, zapis wyniku
 
    Usage:
-     ./projektAizo --file <algorithm> <type> <inputFile> [outputFile] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..10000}]
+     ./projektAizo --file <algorithm> <type> <inputFile> [--pivot {0..3}] [--gap {0..1}] [--drunk {0..10000}]  [outputFile]
 
    Gdzie:
      <> <- obowiązkowy parametr
@@ -61,7 +61,7 @@ PROGRAM MODES:
      zapisywane do pliku (czas, min, max, odchylenie standardowe, itp.)
 
    Usage:
-        ./projektAizo --test <algorithm> <type> <size> <runs> [outputFile] [--distribution {0..4}] [--pivot {0..3}] [--gap {0..1}] [--drunk {0..10000}]
+        ./projektAizo --test <algorithm> <type> <size> <runs> <distType> [--pivot {0..3}] [--gap {0..1}] [--drunk {0..10000}] [outputFile]
 
       Gdzie:
         <> <- obowiązkowy parametr
@@ -91,13 +91,13 @@ PROGRAM MODES:
         [outputFile]         opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną posortowane dane w folderze output.
                              Brak argumentu ustawi nazwę tego pliku na [wprowadzone parametry].txt.
 
-        --distribution <distType>   Rodzaj rozkładu początkowego danych:
+        <distType>   Rodzaj rozkładu początkowego danych:
 
-                                     0 - losowy
-                                     1 - rosnący
-                                     2 - malejący
-                                     3 - posortowany częściowo w 33%
-                                     4 - posortowany częściowo w 66%
+                             0 - losowy
+                             1 - rosnący
+                             2 - malejący
+                             3 - posortowany częściowo w 33%
+                             4 - posortowany częściowo w 66%
 
         --pivot <0..3>       Sposób wyboru pivota (tylko dla QuickSort):
 

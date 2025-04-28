@@ -3,7 +3,7 @@
 
 #include "../utils/Timer.h"
 #include <cstdlib>  // rand
-#include <random>
+#include <random>   // dla std::mt19937 i std::uniform_int_distribution
 
 template<typename T>
 class SortingAlgorithms {
@@ -29,12 +29,12 @@ public:
     bool isSorted() const;
 
 private:
-    void siftDown(int i, int n);
+    void heapify(int i, int n);
+    void bstify(int i, int n);
     int partition(int low, int high);
     void quickSortRec(int low, int high);
 };
 
-// Implementacja
 
 template<typename T>
 SortingAlgorithms<T>::SortingAlgorithms(T* _arr, int _algorithm, int _size, int _pivot, int _gap, int _drunk)
@@ -74,7 +74,7 @@ int SortingAlgorithms<T>::insertionSort(Timer& timer) {
 }
 
 template<typename T>
-void SortingAlgorithms<T>::siftDown(int i, int n) {
+void SortingAlgorithms<T>::heapify(int i, int n) {
     int largest = i;
     int l = 2 * i + 1;
     int r = 2 * i + 2;
@@ -84,19 +84,63 @@ void SortingAlgorithms<T>::siftDown(int i, int n) {
         T temp = arr[i];
         arr[i] = arr[largest];
         arr[largest] = temp;
-        siftDown(largest, n);
+        heapify(largest, n);
     }
 }
 
 template<typename T>
-int SortingAlgorithms<T>::heapSort(Timer& timer) {
+void SortingAlgorithms<T>::bstify(int i, int n) {
+    int left = 2 * i + 1;
+    int right = 2 * i + 2;
+
+    if (left < n && arr[left] > arr[i]) {
+        T temp = arr[i];
+        arr[i] = arr[left];
+        arr[left] = temp;
+        bstify(left, n);
+    }
+    if (right < n && arr[right] < arr[i]) {
+        T temp = arr[i];
+        arr[i] = arr[right];
+        arr[right] = temp;
+        bstify(right, n);
+    }
+}
+
+template<typename T>
+int SortingAlgorithms<T>::heapDrunkSort(Timer& timer) {
     timer.reset(); timer.start();
-    for (int i = size / 2 - 1; i >= 0; --i) siftDown(i, size);
+
+    for (int i = size / 2 - 1; i >= 0; --i) {
+        heapify(i, size);
+    }
+
     for (int end = size - 1; end > 0; --end) {
         T temp = arr[0];
         arr[0] = arr[end];
         arr[end] = temp;
-        siftDown(0, end);
+
+        if (std::rand() % 10000 < drunk) {
+            bstify(0, end);
+        } else {
+            heapify(0, end);
+        }
+    }
+
+    timer.stop();
+    return timer.result();
+}
+
+
+template<typename T>
+int SortingAlgorithms<T>::heapSort(Timer& timer) {
+    timer.reset(); timer.start();
+    for (int i = size / 2 - 1; i >= 0; --i) heapify(i, size);
+    for (int end = size - 1; end > 0; --end) {
+        T temp = arr[0];
+        arr[0] = arr[end];
+        arr[end] = temp;
+        heapify(0, end);
     }
     timer.stop();
     return timer.result();
@@ -105,9 +149,44 @@ int SortingAlgorithms<T>::heapSort(Timer& timer) {
 template<typename T>
 int SortingAlgorithms<T>::shellSort(Timer& timer) {
     timer.reset(); timer.start();
-    int g = (gap == 1 ? 1 : size / 2);
-    if (gap == 1) while (g < size) g = 3 * g + 1;
-    for (; g > 0; g = (gap == 1 ? g / 3 : g / 2)) {
+
+    if (gap == 0) {
+        // Shell 1959: gap = N/2, N/4, ..., 1
+        for (int g = size / 2; g > 0; g /= 2) {
+            for (int i = g; i < size; ++i) {
+                T temp = arr[i];
+                int j = i;
+                while (j >= g && arr[j - g] > temp) {
+                    arr[j] = arr[j - g];
+                    j -= g;
+                }
+                arr[j] = temp;
+            }
+        }
+    } else if (gap == 1) {
+        // Frank & Lazarus 1960: gap = 2*(N/2^(k+1)) + 1
+        int k = 1;
+        while (true) {
+            int computedGap = 2 * (size / (1 << (k + 1))) + 1;
+            if (computedGap > 1) {
+                int g = computedGap;
+                for (int i = g; i < size; ++i) {
+                    T temp = arr[i];
+                    int j = i;
+                    while (j >= g && arr[j - g] > temp) {
+                        arr[j] = arr[j - g];
+                        j -= g;
+                    }
+                    arr[j] = temp;
+                }
+                ++k;
+            } else {
+                break;
+            }
+        }
+
+        // Na końcu gap=1
+        int g = 1;
         for (int i = g; i < size; ++i) {
             T temp = arr[i];
             int j = i;
@@ -117,10 +196,15 @@ int SortingAlgorithms<T>::shellSort(Timer& timer) {
             }
             arr[j] = temp;
         }
+    } else {
+        printf("Wrong gap sequence\n");
+        exit(1);
     }
+
     timer.stop();
     return timer.result();
 }
+
 
 template<typename T>
 int SortingAlgorithms<T>::partition(int low, int high) {
@@ -133,7 +217,10 @@ int SortingAlgorithms<T>::partition(int low, int high) {
     } else if (pivot == 1) {
         piv = arr[low + (high - low) / 2];
     } else if (pivot == 2) {
-        piv = arr[high];
+        T temp = arr[low];
+        arr[low] = arr[high];
+        arr[high] = temp;
+        piv = arr[low];
     } else {
         piv = arr[low];
     }
@@ -163,27 +250,6 @@ template<typename T>
 int SortingAlgorithms<T>::quickSort(Timer& timer) {
     timer.reset(); timer.start();
     quickSortRec(0, size - 1);
-    timer.stop();
-    return timer.result();
-}
-
-template<typename T>
-int SortingAlgorithms<T>::heapDrunkSort(Timer& timer) {
-    timer.reset(); timer.start();
-    for (int i = size / 2 - 1; i >= 0; --i) siftDown(i, size);
-    for (int end = size - 1; end > 0; --end) {
-        T temp = arr[0];
-        arr[0] = arr[end];
-        arr[end] = temp;
-        if (std::rand() % 10000 < drunk) {
-            int i1 = std::rand() % size;
-            int i2 = std::rand() % size;
-            T t = arr[i1];
-            arr[i1] = arr[i2];
-            arr[i2] = t;
-        }
-        siftDown(0, end);
-    }
     timer.stop();
     return timer.result();
 }

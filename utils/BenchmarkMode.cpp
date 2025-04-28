@@ -16,12 +16,18 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
         exit(1);
     }
 
+    for (int i = 0; i < argc; ++i) {
+        std::cout << argv[i] << " ";
+    }
+    std::cout << "\n";
+
     algorithm = parseInt(argv[2], "<algorithm>");
     type = parseInt(argv[3], "<type>");
     size = parseInt(argv[4], "<size>");
     runs = parseInt(argv[5], "<runs>");
+    distribution = parseInt(argv[6], "<distribution>");
 
-    int currentArg = 6;
+    int currentArg = 7;
 
     while (currentArg < argc) {
         std::string flag = argv[currentArg];
@@ -48,22 +54,6 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --drunk.\n";
-                exit(1);
-            }
-        } else if (flag == "--distribution") {
-            if (currentArg + 1 < argc) {
-                distribution = parseInt(argv[currentArg + 1], "--distribution");
-                currentArg += 2;
-            } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --distribution.\n";
-                exit(1);
-            }
-        } else if (flag == "--runs") {
-            if (currentArg + 1 < argc) {
-                runs = parseInt(argv[currentArg + 1], "--runs");
-                currentArg += 2;
-            } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --runs.\n";
                 exit(1);
             }
         } else {
@@ -93,7 +83,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[])
     }
 }
 
-void BenchmarkMode::run() const {
+void BenchmarkMode::run() {
     std::cout << "Uruchamianie Benchmark Mode:\n";
     std::cout << "Algorithm: " << algorithm << "\n";
     std::cout << "Type: " << type << "\n";
@@ -122,6 +112,7 @@ void BenchmarkMode::run() const {
             while (!sorter.isSorted()) {
                 ++unsortedCount;
                 ++retries;
+                if (retries % 100000 == 0) {--drunk;}
                 std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
                 Timer retryTimer;
                 times[i] += sorter.sort(retryTimer);
@@ -138,6 +129,7 @@ void BenchmarkMode::run() const {
             while (!sorter.isSorted()) {
                 ++unsortedCount;
                 ++retries;
+                if (retries % 100000 == 0) {--drunk;}
                 std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
                 Timer retryTimer;
                 times[i] += sorter.sort(retryTimer);
@@ -154,6 +146,7 @@ void BenchmarkMode::run() const {
             while (!sorter.isSorted()) {
                 ++unsortedCount;
                 ++retries;
+                if (retries % 100000 == 0) {--drunk;}
                 std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
                 Timer retryTimer;
                 times[i] += sorter.sort(retryTimer);
@@ -170,6 +163,7 @@ void BenchmarkMode::run() const {
             while (!sorter.isSorted()) {
                 ++unsortedCount;
                 ++retries;
+                if (retries % 100000 == 0) {--drunk;}
                 std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
                 Timer retryTimer;
                 times[i] += sorter.sort(retryTimer);
@@ -192,7 +186,7 @@ int BenchmarkMode::parseInt(const char* s, const std::string& flagName) {
     try {
         return std::stoi(s);
     } catch (const std::invalid_argument&) {
-        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
+        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n" << s;
         exit(1);
     } catch (const std::out_of_range&) {
         std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";

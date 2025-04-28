@@ -77,7 +77,11 @@ T DataGenerator::generateRandomValue() {
                 std::numeric_limits<T>::lowest(),
                 std::numeric_limits<T>::max()
         );
-        return dist(getRng());
+        T value;
+        do {
+            value = dist(getRng());
+        } while (std::isnan(value) || std::isinf(value));
+        return value;
     } else {
         static_assert(std::is_arithmetic_v<T>, "Nieobsługiwany typ w generateRandomValue");
     }

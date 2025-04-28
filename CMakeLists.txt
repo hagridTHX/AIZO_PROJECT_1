@@ -1,23 +1,30 @@
 cmake_minimum_required(VERSION 3.30)
-project(projektAizo)
+project(projektAizo LANGUAGES CXX)
 
+# ustawienia C++
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
+# kompilatorowe opcje ostrzeżeń
 add_compile_options(-Wall -Wextra -Wpedantic -Wshadow -Wconversion)
 
-# Włącz AddressSanitizer tylko na Linuxie
-if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang" AND NOT MINGW)
-    message(STATUS "Używanie AddressSanitizer dla debugowania")
-    add_compile_options(-fsanitize=address -g)
-    add_link_options(-fsanitize=address)
+# opcje kompilacji zależne od typu builda (Debug / Release)
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    message(STATUS "Kompilacja w trybie Debug")
+    add_compile_options(-g)
+elseif(CMAKE_BUILD_TYPE MATCHES Release)
+    message(STATUS "Kompilacja w trybie Release")
+    add_compile_options(-O2)
 endif()
 
-if(MINGW)
-    message(STATUS "Włączone statyczne linkowanie na MinGW")
-    set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc -static-libstdc++ -pthread")
+# statyczne linkowanie tylko na Windowsie
+if(WIN32)
+    message(STATUS "Włączone statyczne linkowanie na Windowsie (MinGW)")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static -static-libgcc -static-libstdc++ -pthread")
 endif()
 
-# Tworzenie pliku wynikowego
+# tworzenie pliku wykonywalnego
 add_executable(projektAizo
         main.cpp
         utils/Timer.cpp

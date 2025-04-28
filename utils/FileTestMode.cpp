@@ -71,7 +71,7 @@ FileTestMode::FileTestMode(int argc, char* argv[])
     }
 }
 
-void FileTestMode::run() const {
+void FileTestMode::run() {
     std::cout << "Uruchamianie File Test Mode:\n";
     std::cout << "Algorithm: " << algorithm << "\n";
     std::cout << "Type: " << type << "\n";

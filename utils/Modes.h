@@ -14,7 +14,7 @@ public:
     std::string outputFile;
 
     FileTestMode(int argc, char* argv[]);
-    void run() const;
+    void run();
 
 private:
     static int parseInt(const char* s, const std::string& flagName);
@@ -34,7 +34,7 @@ public:
     std::string outputFile;
 
     BenchmarkMode(int argc, char* argv[]);
-    void run() const;
+    void run();
 
 private:
     static int parseInt(const char* s, const std::string& flagName);
