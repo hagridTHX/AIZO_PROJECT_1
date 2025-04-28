@@ -101,7 +101,7 @@ void FileTestMode::run() {
             int retries = 0;
             while (!sorter.isSorted()) {
                 ++retries;
-                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                if (retries % handler.getSize() == 0) { sorter.decrDrunk(); }
                 std::cout << "[!] Retry #" << retries << "\n";
                 Timer retryTimer;
                 sorter.sort(retryTimer);
@@ -130,7 +130,7 @@ void FileTestMode::run() {
             int retries = 0;
             while (!sorter.isSorted()) {
                 ++retries;
-                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                if (retries % handler.getSize() == 0) { sorter.decrDrunk(); }
                 std::cout << "[!] Retry #" << retries << "\n";
                 Timer retryTimer;
                 sorter.sort(retryTimer);
@@ -159,7 +159,7 @@ void FileTestMode::run() {
             int retries = 0;
             while (!sorter.isSorted()) {
                 ++retries;
-                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                if (retries % handler.getSize() == 0) { sorter.decrDrunk(); }
                 std::cout << "[!] Retry #" << retries << "\n";
                 Timer retryTimer;
                 sorter.sort(retryTimer);
@@ -188,7 +188,7 @@ void FileTestMode::run() {
             int retries = 0;
             while (!sorter.isSorted()) {
                 ++retries;
-                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                if (retries % handler.getSize() == 0) { sorter.decrDrunk(); }
                 std::cout << "[!] Retry #" << retries << "\n";
                 Timer retryTimer;
                 sorter.sort(retryTimer);

@@ -113,7 +113,7 @@ void BenchmarkMode::run() {
             if (algorithm == 4) {
                 while (!sorter.isSorted()) {
                     ++retries;
-                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    if (retries % size == 0) { sorter.decrDrunk(); }
                     std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
                     Timer retryTimer;
                     times[i] += sorter.sort(retryTimer);
@@ -138,7 +138,7 @@ void BenchmarkMode::run() {
             if (algorithm == 4) {
                 while (!sorter.isSorted()) {
                     ++retries;
-                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    if (retries % size == 0) { sorter.decrDrunk(); }
                     std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
                     Timer retryTimer;
                     times[i] += sorter.sort(retryTimer);
@@ -163,7 +163,7 @@ void BenchmarkMode::run() {
             if (algorithm == 4) {
                 while (!sorter.isSorted()) {
                     ++retries;
-                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    if (retries % size == 0) { sorter.decrDrunk(); }
                     std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
                     Timer retryTimer;
                     times[i] += sorter.sort(retryTimer);
@@ -188,7 +188,7 @@ void BenchmarkMode::run() {
             if (algorithm == 4) {
                 while (!sorter.isSorted()) {
                     ++retries;
-                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    if (retries % size == 0) { sorter.decrDrunk(); }
                     std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
                     Timer retryTimer;
                     times[i] += sorter.sort(retryTimer);
