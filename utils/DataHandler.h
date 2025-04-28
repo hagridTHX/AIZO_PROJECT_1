@@ -41,7 +41,7 @@ public:
 
     void writeBenchmarkResult(int algorithm, int type, int size, int runs,
                               int pivot, int gap, int drunk, int distribution,
-                              int* times, int unsortedCount);
+                              int* times, int retries);
 
 private:
     static std::string addFolderPrefix(const std::string& filename, const std::string& folder) {
@@ -110,7 +110,7 @@ void DataHandler::writeToFile(T* data, int dataSize) {
 
 inline void DataHandler::writeBenchmarkResult(int algorithm, int type, int data_size, int runs,
                                               int pivot, int gap, int drunk, int distribution,
-                                              int* times, int unsortedCount) {
+                                              int* times, int retries) {
     bool writeHeader = false;
 
     std::ifstream infile(outputFile);
@@ -167,7 +167,7 @@ inline void DataHandler::writeBenchmarkResult(int algorithm, int type, int data_
         << maxTime << ';'
         << median << ';'
         << stddev << ';'
-        << unsortedCount << '\n';
+        << retries << '\n';
 
     out.close();
 }

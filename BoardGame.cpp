@@ -1,14 +1,6 @@
 #include "BoardGame.h"
 #include <cstring>
 
-int BoardGame::countA() const {
-    int counter = 0;
-    for (int i = 0; publisher[i] != '\0'; ++i)
-        if (publisher[i] == 'a' || publisher[i] == 'A')
-            ++counter;
-    return counter;
-}
-
 BoardGame::BoardGame()
         : name(""), publisher(""), min_players(0), max_players(0), duration_minutes(0), complexity_level(0), joy_level(0) {}
 
@@ -28,6 +20,14 @@ BoardGame::BoardGame(const char* nm, const char* pub, int minP, int maxP, int du
 }
 
 BoardGame::~BoardGame() {};
+
+int BoardGame::countA() const {
+    int counter = 0;
+    for (int i = 0; publisher[i] != '\0'; ++i)
+        if (publisher[i] == 'a' || publisher[i] == 'A')
+            ++counter;
+    return counter;
+}
 
 double BoardGame::calculateCoolness() const {
     double avg_players = (min_players + max_players) / 2.0;

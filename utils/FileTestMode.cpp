@@ -22,11 +22,14 @@ FileTestMode::FileTestMode(int argc, char* argv[])
         std::cerr << "Błąd: Brak inputFile.\n";
         exit(1);
     }
+
     inputFile = addFolderPrefix(argv[currentArg++], "input");
 
+    // Jeśli jest kolejny argument i nie zaczyna się od '--', to jest to outputFile
     if (currentArg < argc && argv[currentArg][0] != '-') {
         outputFile = addFolderPrefix(argv[currentArg++], "output");
     } else {
+        // Domyślna nazwa outputFile
         std::string inputFilenameOnly = std::filesystem::path(inputFile).filename().string();
         size_t dotPos = inputFilenameOnly.rfind('.');
         if (dotPos != std::string::npos) {
@@ -37,6 +40,7 @@ FileTestMode::FileTestMode(int argc, char* argv[])
         outputFile = addFolderPrefix(inputFilenameOnly, "output");
     }
 
+    // Teraz dopiero parsujemy flagi (--pivot, --gap, --drunk)
     while (currentArg < argc) {
         std::string flag = argv[currentArg];
 
@@ -87,32 +91,125 @@ void FileTestMode::run() {
     if (type == 0) {
         int* data = handler.readFromFile<int>();
         SortingAlgorithms<int> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+
+        timer.reset();
+        timer.start();
         sorter.sort(timer);
+        timer.stop();
+
+        if (algorithm == 4) {
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++retries;
+                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                std::cout << "[!] Retry #" << retries << "\n";
+                Timer retryTimer;
+                sorter.sort(retryTimer);
+            }
+        } else {
+            if (!sorter.isSorted()) {
+                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
+                delete[] data;
+                exit(1);
+            }
+        }
+
         handler.writeToFile(data, handler.getSize());
         delete[] data;
+
     } else if (type == 1) {
         float* data = handler.readFromFile<float>();
         SortingAlgorithms<float> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+
+        timer.reset();
+        timer.start();
         sorter.sort(timer);
+        timer.stop();
+
+        if (algorithm == 4) {
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++retries;
+                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                std::cout << "[!] Retry #" << retries << "\n";
+                Timer retryTimer;
+                sorter.sort(retryTimer);
+            }
+        } else {
+            if (!sorter.isSorted()) {
+                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
+                delete[] data;
+                exit(1);
+            }
+        }
+
         handler.writeToFile(data, handler.getSize());
         delete[] data;
+
     } else if (type == 2) {
         char* data = handler.readFromFile<char>();
         SortingAlgorithms<char> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+
+        timer.reset();
+        timer.start();
         sorter.sort(timer);
+        timer.stop();
+
+        if (algorithm == 4) {
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++retries;
+                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                std::cout << "[!] Retry #" << retries << "\n";
+                Timer retryTimer;
+                sorter.sort(retryTimer);
+            }
+        } else {
+            if (!sorter.isSorted()) {
+                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
+                delete[] data;
+                exit(1);
+            }
+        }
+
         handler.writeToFile(data, handler.getSize());
         delete[] data;
+
     } else if (type == 3) {
         BoardGame* data = handler.readFromFile<BoardGame>();
         SortingAlgorithms<BoardGame> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+
+        timer.reset();
+        timer.start();
         sorter.sort(timer);
+        timer.stop();
+
+        if (algorithm == 4) {
+            int retries = 0;
+            while (!sorter.isSorted()) {
+                ++retries;
+                if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                std::cout << "[!] Retry #" << retries << "\n";
+                Timer retryTimer;
+                sorter.sort(retryTimer);
+            }
+        } else {
+            if (!sorter.isSorted()) {
+                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
+                delete[] data;
+                exit(1);
+            }
+        }
+
         handler.writeToFile(data, handler.getSize());
         delete[] data;
+
     } else {
         std::cerr << "Błąd: Nieznany typ danych.\n";
         exit(1);
     }
 }
+
 
 int FileTestMode::parseInt(const char* s, const std::string& flagName) {
     try {

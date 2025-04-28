@@ -20,21 +20,21 @@ if false == true (
     rem --- Wersje podstawowe (Insert, Heap) ---
     for %%A in (0 1) do (
         for %%S in (10000 20000 40000 80000 160000) do (
-            "%BINARY%" --test %%A 0 %%S %RUNS% 0 "%OUTPUT_DIR%\bad1_alg%%A_size%%S.txt"
+            "%BINARY%" --test %%A 0 %%S %RUNS% 0 "%OUTPUT_DIR%\bad1_alg%%A.txt"
         )
     )
 
     rem --- ShellSort (gap 0 i 1) ---
     for %%G in (0 1) do (
         for %%S in (10000 20000 40000 80000 160000) do (
-            "%BINARY%" --test 2 0 %%S %RUNS% 0 --gap %%G "%OUTPUT_DIR%\bad1_shell_gap%%G_size%%S.txt"
+            "%BINARY%" --test 2 0 %%S %RUNS% 0 --gap %%G "%OUTPUT_DIR%\bad1_shell_gap%%G.txt"
         )
     )
 
     rem --- QuickSort (pivot 0,1,2,3) ---
     for %%P in (0 1 2 3) do (
         for %%S in (10000 20000 40000 80000 160000) do (
-            "%BINARY%" --test 3 0 %%S %RUNS% 0 --pivot %%P "%OUTPUT_DIR%\bad1_quick_pivot%%P_size%%S.txt"
+            "%BINARY%" --test 3 0 %%S %RUNS% 0 --pivot %%P "%OUTPUT_DIR%\bad1_quick_pivot%%P.txt"
         )
     )
 
@@ -43,7 +43,7 @@ if false == true (
 rem --- HeapDrunk (różne wartości drunk) ---
 if true == true (
     for %%D in (1 2 3 4 5) do (
-        "%BINARY%" --test 4 0 20000 %RUNS% 0 --drunk %%D "%OUTPUT_DIR%\bad1_heapdrunk_drunk%%D.txt"
+        "%BINARY%" --test 4 0 40000 %RUNS% 0 --drunk %%D "%OUTPUT_DIR%\bad1_heapdrunk_drunk%%D.txt"
     )
 )
 

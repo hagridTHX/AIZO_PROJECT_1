@@ -1,0 +1,6 @@
+5
+Catan Kosmos 3 4 90 3 8
+Carcassonne HansImGlueck 2 5 45 2 7
+TicketToRide DaysOfWonder 2 5 60 2 9
+TerraformingMars FryxGames 1 5 120 4 9
+Azul NextMove 2 4 30 1 8

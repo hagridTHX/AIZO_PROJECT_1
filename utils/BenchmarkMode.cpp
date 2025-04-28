@@ -96,10 +96,12 @@ void BenchmarkMode::run() {
     std::cout << "Output file: " << outputFile << "\n";
 
     int* times = new int[runs];
-    int unsortedCount = 0;
+    int retries;
 
     for (int i = 0; i < runs; ++i) {
         DataGenerator generator(distribution, size);
+
+        retries = 0;
 
         if (type == 0) {
             int* data = generator.generateData<int>();
@@ -108,16 +110,24 @@ void BenchmarkMode::run() {
             Timer timer;
             times[i] = sorter.sort(timer);
 
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++unsortedCount;
-                ++retries;
-                if (retries % 100000 == 0) {--drunk;}
-                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
-                Timer retryTimer;
-                times[i] += sorter.sort(retryTimer);
+            if (algorithm == 4) {
+                while (!sorter.isSorted()) {
+                    ++retries;
+                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
+                    Timer retryTimer;
+                    times[i] += sorter.sort(retryTimer);
+                }
+            } else {
+                if (!sorter.isSorted()) {
+                    std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych (run #" << (i + 1) << ").\n";
+                    delete[] data;
+                    delete[] times;
+                    exit(1);
+                }
             }
             delete[] data;
+
         } else if (type == 1) {
             float* data = generator.generateData<float>();
             SortingAlgorithms<float> sorter(data, algorithm, size, pivot, gap, drunk);
@@ -125,16 +135,24 @@ void BenchmarkMode::run() {
             Timer timer;
             times[i] = sorter.sort(timer);
 
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++unsortedCount;
-                ++retries;
-                if (retries % 100000 == 0) {--drunk;}
-                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
-                Timer retryTimer;
-                times[i] += sorter.sort(retryTimer);
+            if (algorithm == 4) {
+                while (!sorter.isSorted()) {
+                    ++retries;
+                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
+                    Timer retryTimer;
+                    times[i] += sorter.sort(retryTimer);
+                }
+            } else {
+                if (!sorter.isSorted()) {
+                    std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych (run #" << (i + 1) << ").\n";
+                    delete[] data;
+                    delete[] times;
+                    exit(1);
+                }
             }
             delete[] data;
+
         } else if (type == 2) {
             char* data = generator.generateData<char>();
             SortingAlgorithms<char> sorter(data, algorithm, size, pivot, gap, drunk);
@@ -142,16 +160,24 @@ void BenchmarkMode::run() {
             Timer timer;
             times[i] = sorter.sort(timer);
 
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++unsortedCount;
-                ++retries;
-                if (retries % 100000 == 0) {--drunk;}
-                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
-                Timer retryTimer;
-                times[i] += sorter.sort(retryTimer);
+            if (algorithm == 4) {
+                while (!sorter.isSorted()) {
+                    ++retries;
+                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
+                    Timer retryTimer;
+                    times[i] += sorter.sort(retryTimer);
+                }
+            } else {
+                if (!sorter.isSorted()) {
+                    std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych (run #" << (i + 1) << ").\n";
+                    delete[] data;
+                    delete[] times;
+                    exit(1);
+                }
             }
             delete[] data;
+
         } else if (type == 3) {
             BoardGame* data = generator.generateData<BoardGame>();
             SortingAlgorithms<BoardGame> sorter(data, algorithm, size, pivot, gap, drunk);
@@ -159,34 +185,44 @@ void BenchmarkMode::run() {
             Timer timer;
             times[i] = sorter.sort(timer);
 
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++unsortedCount;
-                ++retries;
-                if (retries % 100000 == 0) {--drunk;}
-                std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << "\n";
-                Timer retryTimer;
-                times[i] += sorter.sort(retryTimer);
+            if (algorithm == 4) {
+                while (!sorter.isSorted()) {
+                    ++retries;
+                    if (retries % 100000 == 0) { sorter.decrDrunk(); }
+                    std::cout << "[!] Retry #" << retries << " for attempt " << (i + 1) << " " << drunk << "\n";
+                    Timer retryTimer;
+                    times[i] += sorter.sort(retryTimer);
+                }
+            } else {
+                if (!sorter.isSorted()) {
+                    std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych (run #" << (i + 1) << ").\n";
+                    delete[] data;
+                    delete[] times;
+                    exit(1);
+                }
             }
             delete[] data;
+
         } else {
             delete[] times;
+            std::cerr << "Błąd: Nieznany typ danych.\n";
             exit(1);
         }
     }
 
     DataHandler handler(outputFile);
-    handler.writeBenchmarkResult(algorithm, type, size, runs, pivot, gap, drunk, distribution, times, unsortedCount);
+    handler.writeBenchmarkResult(algorithm, type, size, runs, pivot, gap, drunk, distribution, times, retries);
 
     delete[] times;
 }
+
 
 
 int BenchmarkMode::parseInt(const char* s, const std::string& flagName) {
     try {
         return std::stoi(s);
     } catch (const std::invalid_argument&) {
-        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n" << s;
+        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
         exit(1);
     } catch (const std::out_of_range&) {
         std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";

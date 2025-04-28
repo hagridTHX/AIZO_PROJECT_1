@@ -27,6 +27,7 @@ public:
     int heapDrunkSort(Timer& timer);
 
     bool isSorted() const;
+    void decrDrunk();
 
 private:
     void heapify(int i, int n);
@@ -35,6 +36,10 @@ private:
     void quickSortRec(int low, int high);
 };
 
+template<typename T>
+void SortingAlgorithms<T>::decrDrunk() {
+    --drunk;
+}
 
 template<typename T>
 SortingAlgorithms<T>::SortingAlgorithms(T* _arr, int _algorithm, int _size, int _pivot, int _gap, int _drunk)
@@ -111,10 +116,7 @@ template<typename T>
 int SortingAlgorithms<T>::heapDrunkSort(Timer& timer) {
     timer.reset(); timer.start();
 
-    for (int i = size / 2 - 1; i >= 0; --i) {
-        heapify(i, size);
-    }
-
+    for (int i = size / 2 - 1; i >= 0; --i) heapify(i, size);
     for (int end = size - 1; end > 0; --end) {
         T temp = arr[0];
         arr[0] = arr[end];
@@ -126,7 +128,6 @@ int SortingAlgorithms<T>::heapDrunkSort(Timer& timer) {
             heapify(0, end);
         }
     }
-
     timer.stop();
     return timer.result();
 }

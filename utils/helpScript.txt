@@ -52,9 +52,6 @@ PROGRAM MODES:
                               - 0 oznacza brak zaburzeń,
                               - 10000 oznacza 100% szansy na zaburzenie każdej operacji.
 
-
-
-
 -------------------------------------------------------------------------------
 2) BENCHMARK MODE
    - Wielokrotne testy sortowania na danych generowanych w locie; wyniki są
