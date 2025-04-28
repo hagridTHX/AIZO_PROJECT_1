@@ -42,7 +42,13 @@ if false == true (
 
 rem --- HeapDrunk (różne wartości drunk) ---
 if true == true (
-    for %%D in (1 2 3 4 5) do (
+    for %%D in (1 5 10 20 50) do (
+        "%BINARY%" --test 4 0 40000 %RUNS% 0 --drunk %%D "%OUTPUT_DIR%\bad1_heapdrunk_drunk%%D.txt"
+    )
+)
+
+if true == true (
+    for %%D in (1000 2500 5000 7500 10000) do (
         "%BINARY%" --test 4 0 40000 %RUNS% 0 --drunk %%D "%OUTPUT_DIR%\bad1_heapdrunk_drunk%%D.txt"
     )
 )
