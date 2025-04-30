@@ -130,11 +130,6 @@ void BenchmarkMode::run() {
 
         } else if (type == 1) {
             float* data = generator.generateData<float>();
-
-            for (int k = 0; k < std::min(size, 10); ++k) {
-                std::cout << data[k] << "\n";
-            }
-
             SortingAlgorithms<float> sorter(data, algorithm, size, pivot, gap, drunk);
 
             Timer timer;

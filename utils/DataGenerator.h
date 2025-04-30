@@ -73,17 +73,14 @@ T DataGenerator::generateRandomValue() {
         );
         return dist(getRng());
     } else if constexpr (std::is_floating_point_v<T>) {
-        std::uniform_real_distribution<T> dist(
-                std::numeric_limits<T>::lowest(),
-                std::numeric_limits<T>::max()
-        );
+        std::uniform_real_distribution<T> dist(-1e6f, 1e6f);  // ograniczony zakres
+
         T value;
         do {
             value = dist(getRng());
         } while (std::isnan(value) || std::isinf(value));
+
         return value;
-    } else {
-        static_assert(std::is_arithmetic_v<T>, "Nieobsługiwany typ w generateRandomValue");
     }
 }
 

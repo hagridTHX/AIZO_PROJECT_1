@@ -93,7 +93,7 @@ if false == true (
 )
 
 if true == true (
-    for %%t in (0 2 3) do (
+    for %%t in (0 1 2 3) do (
         %BINARY% --test 3 %%t 80000 %RUNS% 0 --pivot 1 %OUTPUT_DIR%\bad3_quick_type%%t.txt
     )
 )
