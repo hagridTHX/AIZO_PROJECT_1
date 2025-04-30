@@ -1,0 +1,2 @@
+Algorithm;Type;Size;Runs;Distribution;Pivot;Gap;Drunk;Mean;Min;Max;Median;StdDev;Unsorted
+4;0;80000;100;0;;;500;2075.76;2057;2119;2075;9.98911;500
