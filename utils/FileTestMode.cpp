@@ -147,8 +147,8 @@ void FileTestMode::run() {
         delete[] data;
 
     } else if (type == 2) {
-        char* data = handler.readFromFile<char>();
-        SortingAlgorithms<char> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
+        std::string * data = handler.readFromFile<std::string>();
+        SortingAlgorithms<std::string> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
 
         timer.reset();
         timer.start();

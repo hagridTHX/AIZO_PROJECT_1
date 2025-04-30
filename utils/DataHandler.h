@@ -70,6 +70,12 @@ T* DataHandler::readFromFile() {
             in >> name >> publisher >> minP >> maxP >> dur >> complexity >> joy;
             data[i] = BoardGame(name.c_str(), publisher.c_str(), minP, maxP, dur, complexity, joy);
         }
+    } else if constexpr (std::is_same_v<T, std::string>) {
+
+        in.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+        for (int i = 0; i < size; ++i) {
+            std::getline(in, data[i]);
+        }
     } else {
         for (int i = 0; i < size; ++i) {
             in >> data[i];

@@ -154,8 +154,8 @@ void BenchmarkMode::run() {
             delete[] data;
 
         } else if (type == 2) {
-            char* data = generator.generateData<char>();
-            SortingAlgorithms<char> sorter(data, algorithm, size, pivot, gap, drunk);
+            std::string* data = generator.generateData<std::string>();
+            SortingAlgorithms<std::string> sorter(data, algorithm, size, pivot, gap, drunk);
 
             Timer timer;
             times[i] = sorter.sort(timer);

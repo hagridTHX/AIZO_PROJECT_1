@@ -63,9 +63,19 @@ private:
 
 template<typename T>
 T DataGenerator::generateRandomValue() {
-    if constexpr (std::is_same_v<T, char>) {
-        std::uniform_int_distribution<int> dist(0, 255);
-        return static_cast<char>(dist(getRng()));
+    if constexpr (std::is_same_v<T, std::string>) {
+        std::uniform_int_distribution<int> lenDist(10, 100);
+        std::uniform_int_distribution<char> charDist('A', 'Z');
+
+        int len = lenDist(getRng());
+        std::string result;
+        result.reserve(len);
+
+        for (int i = 0; i < len; ++i) {
+            result += charDist(getRng());
+        }
+
+        return result;
     } else if constexpr (std::is_integral_v<T>) {
         std::uniform_int_distribution<T> dist(
                 std::numeric_limits<T>::min(),
@@ -73,7 +83,7 @@ T DataGenerator::generateRandomValue() {
         );
         return dist(getRng());
     } else if constexpr (std::is_floating_point_v<T>) {
-        std::uniform_real_distribution<T> dist(-1e6f, 1e6f);  // ograniczony zakres
+        std::uniform_real_distribution<T> dist(-1e6f, 1e6f);
 
         T value;
         do {
@@ -81,6 +91,8 @@ T DataGenerator::generateRandomValue() {
         } while (std::isnan(value) || std::isinf(value));
 
         return value;
+    } else {
+        static_assert(std::is_arithmetic_v<T> || std::is_same_v<T, std::string>, "Nieobsługiwany typ w generateRandomValue");
     }
 }
 
