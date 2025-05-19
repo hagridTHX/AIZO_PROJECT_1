@@ -37,7 +37,15 @@ add_executable(projektAizo
         "Projekt 1/algorithms/SortingAlgorithms.h"
         "Projekt 1/utils/DataGenerator.h"
         "Projekt 1/utils/DataHandler.h"
+
+        "Projekt 2/utils/Timer.cpp"
+        "Projekt 2/utils/Timer.h"
+        "Projekt 2/utils/Modes.h"
+        "Projekt 2/utils/FileTestMode.cpp"
+        "Projekt 2/utils/BenchmarkMode.cpp"
         "Projekt 2/algorithms/MST.h"
         "Projekt 2/algorithms/MaxFlow.h"
         "Projekt 2/algorithms/ShortestPath.h"
+        "Projekt 2/utils/DataGenerator.h"
+        "Projekt 2/utils/DataHandler.h"
 )
