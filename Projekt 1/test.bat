@@ -21,7 +21,7 @@ if true == true (
     "%BINARY%" --file 2 1 floatData.txt --gap 0
 
     rem HeapDrunk (50% szansa na zaburzenie)
-    "%BINARY%" --file 4 2 charsData.txt --drunk 9999
+    "%BINARY%" --file 4 2 myChars.txt --drunk 9999
 
     rem QuickSort (pivot losowy, własny output)
     "%BINARY%" --file 3 0 myInts.txt mySortedInts.txt --pivot 3

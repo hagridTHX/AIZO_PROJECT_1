@@ -186,7 +186,7 @@ int SortingAlgorithms<T>::shellSort(Timer& timer) {
             }
         }
 
-        // Na końcu gap=1
+        // na końcu gap=1
         int g = 1;
         for (int i = g; i < size; ++i) {
             T temp = arr[i];

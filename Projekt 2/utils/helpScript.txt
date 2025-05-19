@@ -1,0 +1,145 @@
+PROGRAM MODES:
+-------------------------------------------------------------------------------
+1) FILE TEST MODE
+    - Odczyt danych z pliku, jednorazowe rozwiązanie problemu, zapis wyniku.
+
+    Usage:
+        ./projektAizo --file <problem> <algorithm> <representation> <inputFile> [outputFile] [--start {}] [--end {}]
+
+    Gdzie:
+        <> <- obowiązkowy parametr
+        [] <- opcjonalny parametr
+        -- <- trzeba podać typ parametru podczas wprowadzania
+
+    <problem>   ID wybranego problemu:
+
+        0 - MST (Minimalne Drzewo Rozpinające)
+        1 - Najkrótsza ścieżka
+        2 - Maksymalny przepływ
+
+    <algorithm>     Algorytm do rozwiązania problemu:
+
+        Dla MST:
+            0 - Prim
+            1 - Kruskal
+
+        Dla najkrótszej ścieżki:
+            0 - Dijkstra
+            1 - Ford-Bellman
+
+        Dla maksymalnego przepływu:
+            0 - Ford-Fulkerson
+
+    <representation>    Typ reprezentacji grafu:
+            0 - Macierz incydencji
+            1 - Lista następników/poprzedników
+
+    <inputFile>        Nazwa pliku z reprezentacją grafu znajdującego się w folderze input.
+
+    [outputFile]       opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną dane w folderze output.
+                       Brak argumentu ustawi nazwę tego pliku na [<inputFile> + OUT].txt.
+
+    [start]   Wierzchołek początkowy (obowiązkowe dla najkrótszej ścieżki).
+
+    [end]     Wierzchołek końcowy (obowiązkowe dla najkrótszej ścieżki).
+
+-------------------------------------------------------------------------------
+2) BENCHMARK MODE
+    - Wielokrotne testy na grafach generowanych losowo; wyniki (czasy w ms)
+      zapisywane są do pliku.
+
+    Usage:
+        ./projektAizo --test <problem> <algorithm> <representation> <size> <density> <runs> <inputFile> [outputFile] [--start {}] [--end {}]
+
+    Gdzie:
+        <> <- obowiązkowy parametr
+        [] <- opcjonalny parametr
+        -- <- trzeba podać typ parametru podczas wprowadzania
+
+    <problem>   ID wybranego problemu:
+
+        0 - MST (Minimalne Drzewo Rozpinające)
+        1 - Najkrótsza ścieżka
+        2 - Maksymalny przepływ
+
+    <algorithm>     Algorytm do rozwiązania problemu:
+
+        Dla MST:
+            0 - Prim
+            1 - Kruskal
+
+        Dla najkrótszej ścieżki:
+            0 - Dijkstra
+            1 - Ford-Bellman
+
+        Dla maksymalnego przepływu:
+            0 - Ford-Fulkerson
+
+    <representation>    Typ reprezentacji grafu:
+            0 - Macierz incydencji
+            1 - Lista następników/poprzedników
+
+    <size>      Liczba wierzchołków w losowo generowanym grafie.
+
+    <density>   Gęstość grafu w procentach (0–100), wyrażająca stosunek liczby krawędzi
+                do maksymalnej liczby krawędzi możliwej w grafie pełnym.
+
+    <runs>     Liczba niezależnych powtórzeń testu dla danego zestawu parametrów.
+                Każdy test wygeneruje nowy losowy graf i zmierzy czas działania algorytmu.
+
+    <inputFile>     Nazwa pliku z reprezentacją grafu znajdującego się w folderze input.
+
+    [outputFile]    opcjonalnie nazwa pliku wyjściowego, do którego zapisane zostaną dane w folderze output.
+                    Brak argumentu ustawi nazwę tego pliku na [<inputFile> + OUT].txt.
+
+    [start]   Wierzchołek początkowy (obowiązkowe dla najkrótszej ścieżki).
+
+    [end]     Wierzchołek końcowy (obowiązkowe dla najkrótszej ścieżki).
+
+-------------------------------------------------------------------------------
+3) HELP MODE
+
+    Wyświetlenie niniejszej pomocy.
+
+    Usage:
+    ./projektAizo --help
+
+    Program wyświetli tę pomoc również wtedy, gdy nie zostaną podane żadne argumenty.
+
+-------------------------------------------------------------------------------
+4) UWAGI DODATKOWE
+
+    Pliki wejściowe i wyjściowe domyślnie będą w folderach odpowiednio /input, /output.
+
+    Dla problemu najkrótszej ścieżki parametry --start i --end są wymagane.
+
+    Grafy generowane do testów muszą być spójne.
+
+    Wyniki benchmarków powinny być uśredniane z wielu powtórzeń.
+
+-------------------------------------------------------------------------------
+5) PRZYKŁADY UŻYCIA:
+
+    FILE TEST MODE:
+
+    Minimalne drzewo rozpinające algorytmem Prima, z macierzą incydencji, dane w pliku mst.txt:
+    ./projektAizo --file 0 0 0 mst.txt
+
+    Najkrótsza ścieżka algorytmem Dijkstry, lista następników, z 0 do 10, dane w path.txt, wynik do pathOUT.txt:
+    ./projektAizo --file 1 0 1 path.txt pathOUT.txt --start 0 --end 10
+
+    Maksymalny przepływ algorytmem Forda-Fulkersona, macierz incydencji, dane w flow.txt:
+    ./projektAizo --file 2 0 0 flow.txt
+
+    BENCHMARK MODE:
+
+    Minimalne drzewo rozpinające algorytmem Kruskala, lista następników, 1000 wierzchołków, 50% gęstości, 50 powtórzeń, wyniki do mst_bench.txt:
+    ./projektAizo --test 0 1 1 1000 50 50 mst_bench.txt
+
+    Najkrótsza ścieżka algorytmem Forda-Bellmana, macierz incydencji, 500 wierzchołków, 99% gęstości, 100 powtórzeń, z 0 do 49, wynik do shortest_bench.txt:
+    ./projektAizo --test 1 1 0 500 99 100 shortest_bench.txt --start 0 --end 49
+
+    Maksymalny przepływ algorytmem Forda-Fulkersona, lista następników, 200 wierzchołków, 25% gęstości, 60 powtórzeń:
+    ./projektAizo --test 2 0 1 200 25 60
+
+-------------------------------------------------------------------------------

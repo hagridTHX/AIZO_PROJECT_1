@@ -1,10 +1,10 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "utils/Modes.h"
+#include "Projekt 2/utils/Modes.h"
 
 void printHelp() {
-    std::ifstream helpFile("utils/helpScript.txt");
+    std::ifstream helpFile("Projekt 2/utils/helpScript.txt");
     if (!helpFile.is_open()) {
         std::cerr << "Nie można otworzyć pliku utils/helpScript.txt" << std::endl;
         return;

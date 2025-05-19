@@ -1,2 +1,2 @@
-# AIZO_PROJECT_1
-sorting algorithms, result analysis, working with files, scripting
+# AIZO_PROJECTS
+sorting algorithms, graph algorithms, result analysis, working with files, scripting

@@ -1,0 +1,8 @@
+//
+// Created by Franek on 19.05.2025.
+//
+
+#ifndef PROJEKTAIZO_SHORTESTPATH_H
+#define PROJEKTAIZO_SHORTESTPATH_H
+
+#endif //PROJEKTAIZO_SHORTESTPATH_H

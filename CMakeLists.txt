@@ -27,14 +27,17 @@ endif()
 # tworzenie pliku wykonywalnego
 add_executable(projektAizo
         main.cpp
-        utils/Timer.cpp
-        utils/Timer.h
-        BoardGame.cpp
-        BoardGame.h
-        utils/Modes.h
-        utils/FileTestMode.cpp
-        utils/BenchmarkMode.cpp
-        algorithms/SortingAlgorithms.h
-        utils/DataGenerator.h
-        utils/DataHandler.h
+        "Projekt 1/utils/Timer.cpp"
+        "Projekt 1/utils/Timer.h"
+        "Projekt 1/BoardGame.cpp"
+        "Projekt 1/BoardGame.h"
+        "Projekt 1/utils/Modes.h"
+        "Projekt 1/utils/FileTestMode.cpp"
+        "Projekt 1/utils/BenchmarkMode.cpp"
+        "Projekt 1/algorithms/SortingAlgorithms.h"
+        "Projekt 1/utils/DataGenerator.h"
+        "Projekt 1/utils/DataHandler.h"
+        "Projekt 2/algorithms/MST.h"
+        "Projekt 2/algorithms/MaxFlow.h"
+        "Projekt 2/algorithms/ShortestPath.h"
 )
