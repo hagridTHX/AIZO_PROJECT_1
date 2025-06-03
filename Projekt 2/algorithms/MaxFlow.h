@@ -7,16 +7,16 @@
 
 class MaxFlow {
 private:
-    int representation; // 0 - macierz, 1 - lista
     int** incidenceMatrix = nullptr;
     Graph* graph = nullptr;
+    int representation; // 0 - macierz, 1 - lista
 
 public:
-    MaxFlow(int** matrix, int representation)
-            : incidenceMatrix(matrix), representation(representation) {}
+    MaxFlow(int** _matrix, int _representation)
+            : incidenceMatrix(_matrix), graph(nullptr), representation(_representation) {}
 
-    MaxFlow(Graph* g, int representation)
-            : graph(g), representation(representation) {}
+    MaxFlow(Graph* g, int _representation)
+            : incidenceMatrix(nullptr), graph(g), representation(_representation) {}
 
     int fordFulkerson(Timer& timer, int source, int sink) {
         timer.reset();
@@ -26,16 +26,13 @@ public:
         int** capacity;
 
         if (representation == 0) {
-            // MACIERZ INCYDENCJI
             while (incidenceMatrix[V]) ++V;
             int E = 0;
             while (incidenceMatrix[0][E] != -9999) ++E;
 
             capacity = new int*[V];
             for (int i = 0; i < V; ++i) {
-                capacity[i] = new int[V];
-                for (int j = 0; j < V; ++j)
-                    capacity[i][j] = 0;
+                capacity[i] = new int[V]();
             }
 
             for (int e = 0; e < E; ++e) {
@@ -47,18 +44,16 @@ public:
                     }
                 }
                 if (u != -1 && v != -1)
-                    capacity[u][v] = 1; // lub inna wartość
+                    capacity[u][v] = 1;
             }
 
         } else {
-            // LISTA SĄSIEDZTWA
             V = graph->V;
             capacity = new int*[V];
             for (int i = 0; i < V; ++i) {
-                capacity[i] = new int[V];
-                for (int j = 0; j < V; ++j)
-                    capacity[i][j] = 0;
+                capacity[i] = new int[V]();
             }
+
             for (int u = 0; u < V; ++u) {
                 Node* node = graph->adjList[u];
                 while (node) {
@@ -88,7 +83,6 @@ public:
             int front = 0, rear = 0;
             queue[rear++] = src;
             visited[src] = true;
-            parent[src] = -1;
 
             while (front < rear) {
                 int u = queue[front++];
@@ -109,8 +103,9 @@ public:
             int pathFlow = INT_MAX;
             for (int v = sink; v != source; v = parent[v]) {
                 int u = parent[v];
-                if (rGraph[u][v] < pathFlow) pathFlow = rGraph[u][v];
+                pathFlow = std::min(pathFlow, rGraph[u][v]);
             }
+
             for (int v = sink; v != source; v = parent[v]) {
                 int u = parent[v];
                 rGraph[u][v] -= pathFlow;
@@ -134,4 +129,4 @@ public:
     }
 };
 
-#endif //PROJEKTAIZO_MAXFLOW_H
+#endif // PROJEKTAIZO_MAXFLOW_H

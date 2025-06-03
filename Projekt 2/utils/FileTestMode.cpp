@@ -5,6 +5,8 @@
 #include "DataHandler.h"
 #include <iostream>
 #include <string>
+#include <fstream>
+
 
 FileTestMode::FileTestMode(int argc, char* argv[]) {
     if (argc < 6) {

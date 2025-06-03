@@ -16,6 +16,7 @@ BenchmarkMode::BenchmarkMode(int argc, char **argv) {
         exit(1);
     }
 
+
     problem = parseInt(argv[2], "<problem>");
     algorithm = parseInt(argv[3], "<algorithm>");
     representation = parseInt(argv[4], "<representation>");

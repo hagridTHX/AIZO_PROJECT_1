@@ -4,19 +4,21 @@
 #include "../../Timer.h"
 #include "../utils/GraphStructure.h"
 #include <climits>
+#include <vector>
+#include <algorithm>
 
 class MST {
 private:
-    int representation; // 0 - macierz, 1 - lista
     int** incidenceMatrix = nullptr;
     Graph* graph = nullptr;
+    int representation; // 0 - macierz, 1 - lista
 
 public:
-    MST(int** matrix, int representation)
-            : incidenceMatrix(matrix), representation(representation) {}
+    MST(int** _matrix, int _representation)
+            : incidenceMatrix(_matrix), graph(nullptr), representation(_representation) {}
 
-    MST(Graph* g, int representation)
-            : graph(g), representation(representation) {}
+    MST(Graph* g, int _representation)
+            : incidenceMatrix(nullptr), graph(g), representation(_representation) {}
 
     int prim(Timer& timer) {
         timer.reset();
@@ -39,26 +41,27 @@ public:
             int totalWeight = 0;
 
             for (int count = 0; count < V; ++count) {
-                int u = -1;
-                int minKey = INT_MAX;
+                int u = -1, minKey = INT_MAX;
                 for (int v = 0; v < V; ++v)
                     if (!inMST[v] && key[v] < minKey) {
                         minKey = key[v];
                         u = v;
                     }
+
                 inMST[u] = true;
                 totalWeight += key[u];
 
                 for (int e = 0; e < E; ++e) {
                     if (incidenceMatrix[u][e]) {
                         for (int v = 0; v < V; ++v) {
-                            if (v != u && incidenceMatrix[v][e]) {
-                                if (!inMST[v] && key[v] > 1) key[v] = 1;
+                            if (v != u && incidenceMatrix[v][e] && !inMST[v] && key[v] > 1) {
+                                key[v] = 1;
                             }
                         }
                     }
                 }
             }
+
             delete[] key;
             delete[] inMST;
 
@@ -74,17 +77,18 @@ public:
                 key[i] = INT_MAX;
                 inMST[i] = false;
             }
+
             key[0] = 0;
             int totalWeight = 0;
 
             for (int count = 0; count < V; ++count) {
-                int u = -1;
-                int minKey = INT_MAX;
+                int u = -1, minKey = INT_MAX;
                 for (int v = 0; v < V; ++v)
                     if (!inMST[v] && key[v] < minKey) {
                         minKey = key[v];
                         u = v;
                     }
+
                 inMST[u] = true;
                 totalWeight += key[u];
 
@@ -92,10 +96,12 @@ public:
                 while (current) {
                     int v = current->vertex;
                     int w = current->weight;
-                    if (!inMST[v] && key[v] > w) key[v] = w;
+                    if (!inMST[v] && key[v] > w)
+                        key[v] = w;
                     current = current->next;
                 }
             }
+
             delete[] key;
             delete[] inMST;
 
@@ -154,7 +160,6 @@ public:
         int V = 0;
 
         if (representation == 0) {
-            // MACIERZ INCYDENCJI
             while (incidenceMatrix[V]) ++V;
             int E = 0;
             while (incidenceMatrix[0][E] != -9999) ++E;
@@ -172,12 +177,10 @@ public:
             }
 
         } else {
-            // LISTA SĄSIEDZTWA
             V = graph->V;
             bool** visited = new bool*[V];
-            for (int i = 0; i < V; ++i) {
+            for (int i = 0; i < V; ++i)
                 visited[i] = new bool[V]();
-            }
 
             for (int u = 0; u < V; ++u) {
                 Node* node = graph->adjList[u];
@@ -211,7 +214,6 @@ public:
         timer.stop();
         return timer.result();
     }
-
 };
 
-#endif //PROJEKTAIZO_MST_H
+#endif // PROJEKTAIZO_MST_H

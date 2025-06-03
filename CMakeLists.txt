@@ -47,7 +47,6 @@ add_executable(projektAizo
 
         # Projekt 2: DataGenerator / DataHandler
         "Projekt 2/utils/DataGenerator.h"
-        "Projekt 2/utils/DataHandler.h"
 
         # Jeżeli korzystasz też z BoardGame itp. z Projekt 1, zostaw je, ale nie dubluj FileTestMode/BenchmarkMode:
         "Projekt 1/BoardGame.cpp"
@@ -60,6 +59,8 @@ add_executable(projektAizo
         "Projekt 1/utils/DataHandler.h"
         "Projekt 2/utils/Edge.h"
         "Projekt 2/utils/GraphStructure.h"
+        "Projekt 2/utils/DataHandler.cpp"
+        "Projekt 2/utils/DataHandler.h"
 )
 
 # Upewnij się, że nie ma już tych samych plików z Projekt 1 i Projekt 2

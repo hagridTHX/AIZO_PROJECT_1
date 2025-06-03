@@ -3,33 +3,29 @@
 
 #include "../../Timer.h"
 #include "../utils/GraphStructure.h"
-#include <climits>
 #include "../utils/Edge.h"
+#include <climits>
 
 class ShortestPath {
 private:
-    int representation; // 0 - macierz, 1 - lista
     int** incidenceMatrix = nullptr;
     Graph* graph = nullptr;
+    int representation; // 0 - macierz, 1 - lista
 
 public:
-    ShortestPath(int** matrix, int representation)
-            : incidenceMatrix(matrix), representation(representation) {}
+    ShortestPath(int** _matrix, int _representation)
+            : incidenceMatrix(_matrix), graph(nullptr), representation(_representation) {}
 
-    ShortestPath(Graph* g, int representation)
-            : graph(g), representation(representation) {}
+    ShortestPath(Graph* g, int _representation)
+            : incidenceMatrix(nullptr), graph(g), representation(_representation) {}
 
     int dijkstra(Timer& timer, int source, int target) {
         timer.reset();
         timer.start();
 
-        int V;
-        if (representation == 0) {
-            V = 0;
-            while (incidenceMatrix[V]) ++V;
-        } else {
-            V = graph->V;
-        }
+        int V = (representation == 0)
+                ? [&]() { int v = 0; while (incidenceMatrix[v]) ++v; return v; }()
+                : graph->V;
 
         int* dist = new int[V];
         bool* visited = new bool[V];
@@ -46,12 +42,14 @@ public:
                     minDist = dist[i];
                     u = i;
                 }
+
             if (u == -1) break;
             visited[u] = true;
 
             if (representation == 0) {
                 int E = 0;
                 while (incidenceMatrix[0][E] != -9999) ++E;
+
                 for (int e = 0; e < E; ++e) {
                     if (incidenceMatrix[u][e]) {
                         for (int v = 0; v < V; ++v) {
@@ -84,13 +82,11 @@ public:
         timer.reset();
         timer.start();
 
-        int V, E;
-        Edge* edgeList;
+        int V = 0, E = 0;
+        Edge* edgeList = nullptr;
 
         if (representation == 0) {
-            V = 0;
             while (incidenceMatrix[V]) ++V;
-            E = 0;
             while (incidenceMatrix[0][E] != -9999) ++E;
 
             edgeList = new Edge[E];
@@ -98,16 +94,16 @@ public:
             for (int e = 0; e < E; ++e) {
                 int u = -1, v = -1;
                 for (int i = 0; i < V; ++i) {
-                    if (incidenceMatrix[i][e] == 1) {
+                    if (incidenceMatrix[i][e]) {
                         if (u == -1) u = i;
                         else v = i;
                     }
                 }
                 edgeList[count++] = { u, v, 1 };
             }
+
         } else {
             V = graph->V;
-            E = 0;
             for (int u = 0; u < V; ++u) {
                 Node* node = graph->adjList[u];
                 while (node) {
@@ -132,7 +128,7 @@ public:
             dist[i] = INT_MAX;
         dist[source] = 0;
 
-        for (int i = 1; i <= V - 1; ++i) {
+        for (int i = 1; i < V; ++i) {
             for (int j = 0; j < E; ++j) {
                 int u = edgeList[j].u;
                 int v = edgeList[j].v;
@@ -144,11 +140,10 @@ public:
 
         timer.stop();
         int result = timer.result();
-
         delete[] dist;
         delete[] edgeList;
         return result;
     }
 };
 
-#endif //PROJEKTAIZO_SHORTESTPATH_H
+#endif // PROJEKTAIZO_SHORTESTPATH_H
