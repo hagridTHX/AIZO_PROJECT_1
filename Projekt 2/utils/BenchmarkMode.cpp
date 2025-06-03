@@ -1,15 +1,16 @@
+#ifndef PROJEKTAIZO_BENCHMARKMODE_H
+#define PROJEKTAIZO_BENCHMARKMODE_H
+
 #include "Modes.h"
 #include "../algorithms/MST.h"
 #include "../algorithms/MaxFlow.h"
 #include "../algorithms/ShortestPath.h"
-#include "Timer.h"
 #include "DataHandler.h"
 #include "DataGenerator.h"
 #include <iostream>
-#include <stdexcept>
 #include <string>
 
-BenchmarkMode::BenchmarkMode(int argc, char* argv[]) {
+BenchmarkMode::BenchmarkMode(int argc, char **argv) {
     if (argc < 9) {
         std::cerr << "Błąd: Za mało argumentów dla trybu BENCHMARK MODE.\n";
         exit(1);
@@ -28,7 +29,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[]) {
         std::string flag = argv[currentArg];
         if (flag == "--start") {
             if (currentArg + 1 < argc) {
-                startVertex = parseInt(argv[currentArg + 1], "--start");
+                start = parseInt(argv[currentArg + 1], "--start");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --start.\n";
@@ -36,7 +37,7 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[]) {
             }
         } else if (flag == "--end") {
             if (currentArg + 1 < argc) {
-                endVertex = parseInt(argv[currentArg + 1], "--end");
+                end = parseInt(argv[currentArg + 1], "--end");
                 currentArg += 2;
             } else {
                 std::cerr << "Błąd: Brak wartości dla flagi --end.\n";
@@ -54,11 +55,11 @@ BenchmarkMode::BenchmarkMode(int argc, char* argv[]) {
     }
 
     if (outputFile.empty()) {
-        outputFile = addFolderPrefix("benchmark_result.txt", "output");
+        outputFile = addFolderPrefix(inputFile + "OUT.txt", "output");
     }
 }
 
-void BenchmarkMode::run() {
+void BenchmarkMode::run() const {
     std::cout << "Rozpoczynanie benchmarku grafowego:\n";
     std::cout << "Problem: " << problem << ", Algorytm: " << algorithm << ", Reprezentacja: " << representation << "\n";
     std::cout << "Liczba wierzchołków: " << size << ", Gęstość: " << density << "%" << ", Powtórzenia: " << runs << "\n";
@@ -66,33 +67,68 @@ void BenchmarkMode::run() {
     int* times = new int[runs];
 
     for (int i = 0; i < runs; ++i) {
-        auto graph = DataGenerator::generateGraph(size, density, representation);
+        DataGenerator generator(size, density);
 
         Timer timer;
-        int time = 0;
+        int result = 0;
 
         switch (problem) {
-            case 0: // MST
-                time = MST::run(graph, algorithm);
+            case 0: { // MST
+                if (representation == 0) {
+                    int** matrix = generator.getIncidenceMatrix();
+                    MST mst(matrix, 0);
+                    result = (algorithm == 0) ? mst.prim(timer) : mst.kruskal(timer);
+                    generator.freeIncidenceMatrix(matrix);
+                } else {
+                    Graph* g = generator.getAdjacencyList();
+                    MST mst(g, 1);
+                    result = (algorithm == 0) ? mst.prim(timer) : mst.kruskal(timer);
+                    delete g;
+                }
                 break;
-            case 1: // Shortest Path
-                if (startVertex == -1 || endVertex == -1) {
+            }
+            case 1: { // Shortest Path
+                if (start == -1 || end == -1) {
                     std::cerr << "Brak wierzchołków start/end dla najkrótszej ścieżki.\n";
-                    delete[] times;
                     exit(1);
                 }
-                time = ShortestPath::run(graph, algorithm, startVertex, endVertex);
+                if (representation == 0) {
+                    int** matrix = generator.getIncidenceMatrix();
+                    ShortestPath sp(matrix, 0);
+                    result = (algorithm == 0) ? sp.dijkstra(timer, start, end) : sp.bellmanFord(timer, start, end);
+                    generator.freeIncidenceMatrix(matrix);
+                } else {
+                    Graph* g = generator.getAdjacencyList();
+                    ShortestPath sp(g, 1);
+                    result = (algorithm == 0) ? sp.dijkstra(timer, start, end) : sp.bellmanFord(timer, start, end);
+                    delete g;
+                }
                 break;
-            case 2: // Max Flow
-                time = MaxFlow::run(graph, algorithm);
+            }
+            case 2: { // Max Flow
+                if (start == -1 || end == -1) {
+                    std::cerr << "Brak wierzchołków start/end dla max flow.\n";
+                    exit(1);
+                }
+                if (representation == 0) {
+                    int** matrix = generator.getIncidenceMatrix();
+                    MaxFlow mf(matrix, 0);
+                    result = mf.fordFulkerson(timer, start, end);
+                    generator.freeIncidenceMatrix(matrix);
+                } else {
+                    Graph* g = generator.getAdjacencyList();
+                    MaxFlow mf(g, 1);
+                    result = mf.fordFulkerson(timer, start, end);
+                    delete g;
+                }
                 break;
+            }
             default:
                 std::cerr << "Nieznany problem.\n";
-                delete[] times;
                 exit(1);
         }
 
-        times[i] = timer.elapsedMilliseconds();
+        times[i] = result;
     }
 
     DataHandler handler(outputFile);
@@ -115,3 +151,5 @@ std::string BenchmarkMode::addFolderPrefix(const std::string& filename, const st
            ? folder + "/" + filename
            : filename;
 }
+
+#endif // PROJEKTAIZO_BENCHMARKMODE_H

@@ -31,11 +31,11 @@ public:
     int runs;
     std::string inputFile;
     std::string outputFile;
-    int start;
-    int end;
+    int start; // Wierzchołek początkowy
+    int end;   // Wierzchołek końcowy
 
     BenchmarkMode(int argc, char* argv[]);
-    void run();
+    void run() const;
 
 private:
     static int parseInt(const char* s, const std::string& flagName);

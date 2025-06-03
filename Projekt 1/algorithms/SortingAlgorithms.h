@@ -1,7 +1,7 @@
 #ifndef PROJEKTAIZO_SORTINGALGORITHMS_H
 #define PROJEKTAIZO_SORTINGALGORITHMS_H
 
-#include "../utils/Timer.h"
+#include "../../Timer.h"
 #include <cstdlib>  // rand
 #include <random>   // dla std::mt19937 i std::uniform_int_distribution
 

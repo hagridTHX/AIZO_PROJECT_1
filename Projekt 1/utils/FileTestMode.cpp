@@ -1,7 +1,7 @@
 #include "Modes.h"
 #include "../algorithms/SortingAlgorithms.h"
 #include "DataHandler.h"
-#include "Timer.h"
+#include "../../Timer.h"
 #include <iostream>
 #include <stdexcept>
 #include <filesystem>

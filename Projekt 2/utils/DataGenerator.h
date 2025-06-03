@@ -1,127 +1,174 @@
 #ifndef PROJEKTAIZO_DATAGENERATOR_H
 #define PROJEKTAIZO_DATAGENERATOR_H
 
-#include <random>
+#include <iostream>
 #include <algorithm>
-#include <type_traits>
-#include <limits>
-#include "../BoardGame.h"
+#include <random>
+#include "Edge.h"
 
-class DataGenerator {
-private:
-    int distribution;
-    int size;
-    std::mt19937 rng;
+// === Węzeł listy sąsiedztwa ===
+struct Node {
+    int vertex;
+    int weight;
+    Node* next;
+};
 
-public:
-    DataGenerator(int _distribution, int _size)
-            : distribution(_distribution), size(_size), rng(std::random_device{}()) {}
+// === Reprezentacja grafu (lista sąsiedztwa) ===
+struct Graph {
+    int V;
+    Node** adjList;
 
-    ~DataGenerator() = default;
+    Graph(int vertices) {
+        V = vertices;
+        adjList = new Node*[V];
+        for (int i = 0; i < V; ++i)
+            adjList[i] = nullptr;
+    }
 
-    template<typename T>
-    void partialSort(T* data, int n, int nominator) {
-        int count = n / 3 * nominator;
-        if (count > 0 && count <= n) {
-            std::sort(data, data + count);
+    void addEdge(int u, int v, int w) {
+        Node* nodeU = new Node{v, w, adjList[u]};
+        adjList[u] = nodeU;
+
+        Node* nodeV = new Node{u, w, adjList[v]};
+        adjList[v] = nodeV;
+    }
+
+    void print() {
+        for (int i = 0; i < V; ++i) {
+            std::cout << i << " -> ";
+            Node* curr = adjList[i];
+            while (curr) {
+                std::cout << "(" << curr->vertex << ", " << curr->weight << ") ";
+                curr = curr->next;
+            }
+            std::cout << "\n";
         }
     }
 
-    template<typename T>
-    T generateRandomValue();
-
-    template<typename T>
-    T* generateData() {
-        T* data = new T[size];
-        for (int i = 0; i < size; ++i) {
-            data[i] = generateRandomValue<T>();
+    ~Graph() {
+        for (int i = 0; i < V; ++i) {
+            Node* curr = adjList[i];
+            while (curr) {
+                Node* tmp = curr;
+                curr = curr->next;
+                delete tmp;
+            }
         }
-        switch (distribution) {
-            case 1:
-                std::sort(data, data + size);
-                break;
-            case 2:
-                std::sort(data, data + size, std::greater<>());
-                break;
-            case 3:
-                partialSort(data, size, 1);
-                break;
-            case 4:
-                partialSort(data, size, 2);
-                break;
-            default:
-                break;
-        }
-        return data;
-    }
-
-private:
-    std::mt19937& getRng() {
-        return rng;
+        delete[] adjList;
     }
 };
 
-template<typename T>
-T DataGenerator::generateRandomValue() {
-    if constexpr (std::is_same_v<T, std::string>) {
-        std::uniform_int_distribution<int> lenDist(10, 100);
-        std::uniform_int_distribution<char> charDist('A', 'Z');
+// === Generator grafu ===
+class DataGenerator {
+private:
+    int vertices;
+    int density;
+    int edgesCount;
+    Edge* edgeList;
+    std::mt19937 rng;
 
-        int len = lenDist(getRng());
-        std::string result;
-        result.reserve(len);
+    static bool edgeExists(const Edge* edges, int edge_count, int a, int b) {
+        if (a > b) std::swap(a, b);
+        for (int i = 0; i < edge_count; ++i) {
+            int u = edges[i].u;
+            int v = edges[i].v;
+            if (u > v) std::swap(u, v);
+            if (u == a && v == b) return true;
+        }
+        return false;
+    }
 
-        for (int i = 0; i < len; ++i) {
-            result += charDist(getRng());
+    void computeEdgesCount() {
+        long long maxEdges = 1LL * vertices * (vertices - 1) / 2;
+        long long calc = (1LL * density * maxEdges) / 100;
+        if (calc < vertices - 1)
+            calc = vertices - 1;
+        edgesCount = static_cast<int>(calc);
+    }
+
+    void generateEdgeList() {
+        edgeList = new Edge[edgesCount];
+        int edge_count = 0;
+
+        int* connected = new int[vertices];
+        int* unconnected = new int[vertices];
+        int c_size = 1, u_size = 0;
+
+        connected[0] = 0;
+        for (int i = 1; i < vertices; ++i)
+            unconnected[u_size++] = i;
+
+        auto pick = [&](int N) {
+            std::uniform_int_distribution<int> dist(0, N - 1);
+            return dist(rng);
+        };
+
+        while (u_size > 0) {
+            int a = connected[pick(c_size)];
+            int b_index = pick(u_size);
+            int b = unconnected[b_index];
+
+            edgeList[edge_count++] = { a, b, 1 };
+
+            connected[c_size++] = b;
+            for (int i = b_index; i < u_size - 1; ++i)
+                unconnected[i] = unconnected[i + 1];
+            --u_size;
         }
 
-        return result;
-    } else if constexpr (std::is_integral_v<T>) {
-        std::uniform_int_distribution<T> dist(
-                std::numeric_limits<T>::min(),
-                std::numeric_limits<T>::max()
-        );
-        return dist(getRng());
-    } else if constexpr (std::is_floating_point_v<T>) {
-        std::uniform_real_distribution<T> dist(-1e6f, 1e6f);
+        while (edge_count < edgesCount) {
+            int a = pick(vertices);
+            int b = pick(vertices);
+            if (a == b || edgeExists(edgeList, edge_count, a, b)) continue;
+            edgeList[edge_count++] = { a, b, 1 };
+        }
 
-        T value;
-        do {
-            value = dist(getRng());
-        } while (std::isnan(value) || std::isinf(value));
-
-        return value;
-    } else {
-        static_assert(std::is_arithmetic_v<T> || std::is_same_v<T, std::string>, "Nieobsługiwany typ w generateRandomValue");
+        delete[] connected;
+        delete[] unconnected;
     }
-}
 
-template<>
-inline BoardGame DataGenerator::generateRandomValue<BoardGame>() {
-    char name[26], publisher[26];
-    std::uniform_int_distribution<int> letterDist('A', 'Z');
-    std::uniform_int_distribution<int> letterDistLower('a', 'z');
-    std::uniform_int_distribution<int> lengthDist(3, 25);
+public:
+    DataGenerator(int V, int densityPercent)
+            : vertices(V), density(densityPercent), edgeList(nullptr), rng(std::random_device{}()) {
+        computeEdgesCount();
+        generateEdgeList();
+    }
 
-    int nameLen = lengthDist(getRng());
-    int pubLen = lengthDist(getRng());
-    for (int i = 0; i < nameLen; ++i) name[i] = static_cast<char>(letterDist(getRng()));
-    name[nameLen] = '\0';
-    for (int i = 0; i < pubLen; ++i) publisher[i] = static_cast<char>(letterDistLower(getRng()));
-    publisher[pubLen] = '\0';
+    ~DataGenerator() {
+        delete[] edgeList;
+    }
 
-    std::uniform_int_distribution<int> minPlayerDist(1, 10);
-    std::uniform_int_distribution<int> maxPlayerDist(1, 10);
-    std::uniform_int_distribution<int> durationDist(5, 480);
-    std::uniform_int_distribution<int> levelDist(1, 10);
+    int getNumVertices() const { return vertices; }
+    int getNumEdges() const { return edgesCount; }
 
-    int minP = minPlayerDist(getRng());
-    int maxP = std::max(minP, maxPlayerDist(getRng()));
-    int dur = durationDist(getRng());
-    int complexity = levelDist(getRng());
-    int joy = levelDist(getRng());
+    int** getIncidenceMatrix() const {
+        int** matrix = new int*[vertices];
+        for (int i = 0; i < vertices; ++i)
+            matrix[i] = new int[edgesCount]();
 
-    return {name, publisher, minP, maxP, dur, complexity, joy};
-}
+        for (int j = 0; j < edgesCount; ++j) {
+            int u = edgeList[j].u;
+            int v = edgeList[j].v;
+            matrix[u][j] = 1;
+            matrix[v][j] = 1;
+        }
+
+        return matrix;
+    }
+
+    Graph* getAdjacencyList() const {
+        Graph* g = new Graph(vertices);
+        for (int i = 0; i < edgesCount; ++i) {
+            g->addEdge(edgeList[i].u, edgeList[i].v, edgeList[i].weight);
+        }
+        return g;
+    }
+
+    void freeIncidenceMatrix(int** matrix) const {
+        for (int i = 0; i < vertices; ++i)
+            delete[] matrix[i];
+        delete[] matrix;
+    }
+};
 
 #endif // PROJEKTAIZO_DATAGENERATOR_H

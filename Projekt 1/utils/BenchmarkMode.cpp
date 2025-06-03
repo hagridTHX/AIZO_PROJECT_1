@@ -1,6 +1,6 @@
 #include "Modes.h"
 #include "../algorithms/SortingAlgorithms.h"
-#include "Timer.h"
+#include "../../Timer.h"
 #include "../BoardGame.h"
 #include "DataHandler.h"
 #include "DataGenerator.h"

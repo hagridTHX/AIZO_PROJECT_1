@@ -3,231 +3,144 @@
 #include "../algorithms/MaxFlow.h"
 #include "../algorithms/ShortestPath.h"
 #include "DataHandler.h"
-#include "Timer.h"
 #include <iostream>
-#include <stdexcept>
-#include <filesystem>
+#include <string>
 
-FileTestMode::FileTestMode(int argc, char* argv[])
-        : algorithm(-1), type(-1), pivot(-1), gap(-1), drunk(-1)
-{
-    if (argc < 5) {
+FileTestMode::FileTestMode(int argc, char* argv[]) {
+    if (argc < 6) {
         std::cerr << "Błąd: Za mało argumentów dla trybu FILE TEST MODE.\n";
         exit(1);
     }
 
-    algorithm = parseInt(argv[2], "<algorithm>");
-    type = parseInt(argv[3], "<type>");
-    int currentArg = 4;
+    problem = parseInt(argv[2], "<problem>");
+    algorithm = parseInt(argv[3], "<algorithm>");
+    representation = parseInt(argv[4], "<representation>");
+    inputFile = addFolderPrefix(argv[5], "input");
 
-    if (currentArg >= argc) {
-        std::cerr << "Błąd: Brak inputFile.\n";
-        exit(1);
-    }
-
-    inputFile = addFolderPrefix(argv[currentArg++], "input");
-
-    // Jeśli jest kolejny argument i nie zaczyna się od '--', to jest to outputFile
-    if (currentArg < argc && argv[currentArg][0] != '-') {
-        outputFile = addFolderPrefix(argv[currentArg++], "output");
-    } else {
-        // Domyślna nazwa outputFile
-        std::string inputFilenameOnly = std::filesystem::path(inputFile).filename().string();
-        size_t dotPos = inputFilenameOnly.rfind('.');
-        if (dotPos != std::string::npos) {
-            inputFilenameOnly.insert(dotPos, "OUT");
-        } else {
-            inputFilenameOnly += "OUT";
-        }
-        outputFile = addFolderPrefix(inputFilenameOnly, "output");
-    }
-
-    // Teraz dopiero parsujemy flagi (--pivot, --gap, --drunk)
+    int currentArg = 6;
     while (currentArg < argc) {
         std::string flag = argv[currentArg];
-
-        if (flag == "--pivot") {
+        if (flag == "--start") {
             if (currentArg + 1 < argc) {
-                pivot = parseInt(argv[currentArg + 1], "--pivot");
+                start = parseInt(argv[currentArg + 1], "--start");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --pivot.\n";
+                std::cerr << "Błąd: Brak wartości dla flagi --start.\n";
                 exit(1);
             }
-        } else if (flag == "--gap") {
+        } else if (flag == "--end") {
             if (currentArg + 1 < argc) {
-                gap = parseInt(argv[currentArg + 1], "--gap");
+                end = parseInt(argv[currentArg + 1], "--end");
                 currentArg += 2;
             } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --gap.\n";
-                exit(1);
-            }
-        } else if (flag == "--drunk") {
-            if (currentArg + 1 < argc) {
-                drunk = parseInt(argv[currentArg + 1], "--drunk");
-                currentArg += 2;
-            } else {
-                std::cerr << "Błąd: Brak wartości dla flagi --drunk.\n";
+                std::cerr << "Błąd: Brak wartości dla flagi --end.\n";
                 exit(1);
             }
         } else {
-            std::cerr << "Błąd: Nieznana flaga lub parametr: " << flag << "\n";
-            exit(1);
+            if (outputFile.empty()) {
+                outputFile = addFolderPrefix(flag, "output");
+                ++currentArg;
+            } else {
+                std::cerr << "Błąd: Niezrozumiały dodatkowy argument: " << flag << "\n";
+                exit(1);
+            }
         }
+    }
+
+    if (outputFile.empty()) {
+        outputFile = addFolderPrefix(inputFile + "OUT.txt", "output");
     }
 }
 
 void FileTestMode::run() {
-    std::cout << "Uruchamianie File Test Mode:\n";
-    std::cout << "Algorithm: " << algorithm << "\n";
-    std::cout << "Type: " << type << "\n";
-    if (pivot != -1) std::cout << "Pivot: " << pivot << "\n";
-    if (gap != -1) std::cout << "Gap: " << gap << "\n";
-    if (drunk != -1) std::cout << "Drunk: " << drunk << "\n";
-    std::cout << "Input File: " << inputFile << "\n";
-    std::cout << "Output File: " << outputFile << "\n";
+    std::cout << "Rozpoczynanie testu plikowego:\n";
+    std::cout << "Problem: " << problem << ", Algorytm: " << algorithm << ", Reprezentacja: " << representation << "\n";
+    std::cout << "Plik wejściowy: " << inputFile << ", Plik wyjściowy: " << outputFile << "\n";
+
+    int edgeCount = 0, vertexCount = 0;
+    DataHandler handler(inputFile, outputFile);
+    Edge* edgeList = handler.readGraphFromFile(edgeCount, vertexCount);
 
     Timer timer;
-    DataHandler handler(inputFile, outputFile);
 
-    if (type == 0) {
-        int* data = handler.readFromFile<int>();
-        SortingAlgorithms<int> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
-
-        timer.reset();
-        timer.start();
-        sorter.sort(timer);
-        timer.stop();
-
-        if (algorithm == 4) {
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++retries;
-                sorter.decrDrunk();
-                std::cout << "[!] Retry #" << retries << "\n";
-                Timer retryTimer;
-                sorter.sort(retryTimer);
-            }
-        } else {
-            if (!sorter.isSorted()) {
-                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
-                delete[] data;
-                exit(1);
-            }
+    if (representation == 0) {
+        // === MACIERZ INCYDENCJI ===
+        int** matrix = new int*[vertexCount];
+        for (int i = 0; i < vertexCount; ++i) {
+            matrix[i] = new int[edgeCount]();
+        }
+        for (int i = 0; i < edgeCount; ++i) {
+            matrix[edgeList[i].u][i] = 1;
+            matrix[edgeList[i].v][i] = 1;
         }
 
-        handler.writeToFile(data, handler.getSize());
-        delete[] data;
-
-    } else if (type == 1) {
-        float* data = handler.readFromFile<float>();
-        SortingAlgorithms<float> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
-
-        timer.reset();
-        timer.start();
-        sorter.sort(timer);
-        timer.stop();
-
-        if (algorithm == 4) {
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++retries;
-                sorter.decrDrunk();
-                std::cout << "[!] Retry #" << retries << "\n";
-                Timer retryTimer;
-                sorter.sort(retryTimer);
-            }
-        } else {
-            if (!sorter.isSorted()) {
-                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
-                delete[] data;
+        if (problem == 0) {
+            MST mst(matrix, 0);
+            (algorithm == 0) ? mst.prim(timer) : mst.kruskal(timer);
+        } else if (problem == 1) {
+            if (start == -1 || end == -1) {
+                std::cerr << "Brak wierzchołków start/end dla najkrótszej ścieżki.\n";
                 exit(1);
             }
+            ShortestPath sp(matrix, 0);
+            (algorithm == 0) ? sp.dijkstra(timer, start, end) : sp.bellmanFord(timer, start, end);
+        } else if (problem == 2) {
+            MaxFlow mf(matrix, 0);
+            mf.fordFulkerson(timer, start, end);
         }
 
-        handler.writeToFile(data, handler.getSize());
-        delete[] data;
-
-    } else if (type == 2) {
-        std::string * data = handler.readFromFile<std::string>();
-        SortingAlgorithms<std::string> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
-
-        timer.reset();
-        timer.start();
-        sorter.sort(timer);
-        timer.stop();
-
-        if (algorithm == 4) {
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++retries;
-                sorter.decrDrunk();
-                std::cout << "[!] Retry #" << retries << "\n";
-                Timer retryTimer;
-                sorter.sort(retryTimer);
-            }
-        } else {
-            if (!sorter.isSorted()) {
-                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
-                delete[] data;
-                exit(1);
-            }
-        }
-
-        handler.writeToFile(data, handler.getSize());
-        delete[] data;
-
-    } else if (type == 3) {
-        BoardGame* data = handler.readFromFile<BoardGame>();
-        SortingAlgorithms<BoardGame> sorter(data, algorithm, handler.getSize(), pivot, gap, drunk);
-
-        timer.reset();
-        timer.start();
-        sorter.sort(timer);
-        timer.stop();
-
-        if (algorithm == 4) {
-            int retries = 0;
-            while (!sorter.isSorted()) {
-                ++retries;
-                sorter.decrDrunk();
-                std::cout << "[!] Retry #" << retries << "\n";
-                Timer retryTimer;
-                sorter.sort(retryTimer);
-            }
-        } else {
-            if (!sorter.isSorted()) {
-                std::cerr << "[!] Błąd: Algorytm " << algorithm << " nie posortował poprawnie danych.\n";
-                delete[] data;
-                exit(1);
-            }
-        }
-
-        handler.writeToFile(data, handler.getSize());
-        delete[] data;
-
+        for (int i = 0; i < vertexCount; ++i)
+            delete[] matrix[i];
+        delete[] matrix;
     } else {
-        std::cerr << "Błąd: Nieznany typ danych.\n";
+        // === LISTA SĄSIEDZTWA ===
+        auto* graph = new Graph(vertexCount);
+        for (int i = 0; i < edgeCount; ++i)
+            graph->addEdge(edgeList[i].u, edgeList[i].v, edgeList[i].weight);
+
+        if (problem == 0) {
+            MST mst(graph, 1);
+            (algorithm == 0) ? mst.prim(timer) : mst.kruskal(timer);
+        } else if (problem == 1) {
+            if (start == -1 || end == -1) {
+                std::cerr << "Brak wierzchołków start/end dla najkrótszej ścieżki.\n";
+                exit(1);
+            }
+            ShortestPath sp(graph, 1);
+            (algorithm == 0) ? sp.dijkstra(timer, start, end) : sp.bellmanFord(timer, start, end);
+        } else if (problem == 2) {
+            MaxFlow mf(graph, 1);
+            mf.fordFulkerson(timer, start, end);
+        }
+
+        delete graph;
+    }
+
+    delete[] edgeList;
+
+    int duration = timer.result();
+    std::ofstream out(outputFile);
+    if (!out.is_open()) {
+        std::cerr << "Nie można otworzyć pliku wyjściowego!\n";
         exit(1);
     }
+    out << "Czas wykonania (ms): " << duration << "\n";
+    out.close();
 }
+
 
 
 int FileTestMode::parseInt(const char* s, const std::string& flagName) {
     try {
         return std::stoi(s);
-    } catch (const std::invalid_argument&) {
-        std::cerr << "Błąd: Wartość dla " << flagName << " musi być liczbą całkowitą.\n";
-        exit(1);
-    } catch (const std::out_of_range&) {
-        std::cerr << "Błąd: Liczba dla " << flagName << " jest poza zakresem.\n";
+    } catch (...) {
+        std::cerr << "Błąd: Niepoprawna wartość dla " << flagName << ".\n";
         exit(1);
     }
 }
 
 std::string FileTestMode::addFolderPrefix(const std::string& filename, const std::string& folder) {
-    if (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
-        return folder + "/" + filename;
-    else
-        return filename;
+    return (filename.find('/') == std::string::npos && filename.find('\\') == std::string::npos)
+           ? folder + "/" + filename
+           : filename;
 }
