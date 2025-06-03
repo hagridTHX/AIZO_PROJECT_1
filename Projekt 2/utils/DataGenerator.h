@@ -6,7 +6,6 @@
 #include <random>
 #include "Edge.h"
 
-// === Generator grafu ===
 class DataGenerator {
 private:
     int vertices;

@@ -2,7 +2,6 @@
 #include <fstream>
 #include <stdexcept>
 #include <sstream>
-#include <vector>
 #include <algorithm>
 #include <cmath>
 

@@ -25,7 +25,7 @@ public:
         timer.start();
 
         if (representation == 0) {
-            // === PRIM: MACIERZ INCYDENCJI ===
+            // PRIM: MACIERZ INCYDENCJI
             int V = 0, E = 0;
             while (incidenceMatrix[V]) ++V;
             while (incidenceMatrix[0][E] != -9999) ++E;
@@ -69,7 +69,7 @@ public:
             return timer.result();
 
         } else {
-            // === PRIM: LISTA SĄSIEDZTWA ===
+            // PRIM: LISTA SĄSIEDZTWA
             int V = graph->V;
             int* key = new int[V];
             bool* inMST = new bool[V];

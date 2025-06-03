@@ -95,7 +95,7 @@ void FileTestMode::run() {
             delete[] matrix[i];
         delete[] matrix;
     } else {
-        // === LISTA SĄSIEDZTWA ===
+        // LISTA SĄSIEDZTWA
         auto* graph = new Graph(vertexCount);
         for (int i = 0; i < edgeCount; ++i)
             graph->addEdge(edgeList[i].u, edgeList[i].v, edgeList[i].weight);
